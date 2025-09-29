@@ -14,6 +14,7 @@ import { OptionModule } from './modules/option/option.module';
 import { AnswerModule } from './modules/answer/answer.module';
 import { NotificationModule } from './modules/notification/notification.module';
 import { AuthModule } from './modules/auth/auth.module';
+import { AiAgentModule } from './modules/ai_agent/ai_agent.module';
 
 @Module({
   imports: [
@@ -45,8 +46,12 @@ import { AuthModule } from './modules/auth/auth.module';
     AnswerModule,
     NotificationModule,
     AuthModule,
+    AiAgentModule,
     ],
   controllers: [AppController],
   providers: [AppService],
+  
 })
 export class AppModule {}
+
+
