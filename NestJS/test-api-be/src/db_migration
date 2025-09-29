@@ -1,0 +1,310 @@
+-- Bảng users
+CREATE TABLE users (
+    user_id SERIAL PRIMARY KEY,
+    username VARCHAR(255) UNIQUE NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    role VARCHAR(50) NOT NULL,
+    status VARCHAR(50) DEFAULT 'active',
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Bảng teachers
+CREATE TABLE teachers (
+    teacher_id SERIAL PRIMARY KEY,
+    user_id INTEGER UNIQUE NOT NULL,
+    department VARCHAR(255),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+);
+
+-- Bảng students
+CREATE TABLE students (
+    student_id SERIAL PRIMARY KEY,
+    user_id INTEGER UNIQUE NOT NULL,
+    grade VARCHAR(50),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+);
+
+-- Bảng exams
+CREATE TABLE exams (
+    exam_id SERIAL PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    description TEXT,
+    start_time TIMESTAMP WITH TIME ZONE NOT NULL,
+    end_time TIMESTAMP WITH TIME ZONE NOT NULL,
+    duration INTEGER NOT NULL,
+    teacher_id INTEGER NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (teacher_id) REFERENCES teachers(teacher_id) ON DELETE CASCADE
+);
+
+-- Liên kết many-to-many exams - students
+CREATE TABLE exam_students (
+    exam_id INTEGER NOT NULL,
+    student_id INTEGER NOT NULL,
+    PRIMARY KEY (exam_id, student_id),
+    FOREIGN KEY (exam_id) REFERENCES exams(exam_id) ON DELETE CASCADE,
+    FOREIGN KEY (student_id) REFERENCES students(student_id) ON DELETE CASCADE
+);
+
+-- Bảng questions
+CREATE TABLE questions (
+    question_id SERIAL PRIMARY KEY,
+    content TEXT NOT NULL,
+    type VARCHAR(50) NOT NULL,
+    score INTEGER NOT NULL,
+    exam_id INTEGER NOT NULL,
+    FOREIGN KEY (exam_id) REFERENCES exams(exam_id) ON DELETE CASCADE
+);
+
+-- Bảng options
+CREATE TABLE options (
+    option_id SERIAL PRIMARY KEY,
+    content TEXT NOT NULL,
+    is_correct BOOLEAN NOT NULL,
+    question_id INTEGER NOT NULL,
+    FOREIGN KEY (question_id) REFERENCES questions(question_id) ON DELETE CASCADE
+);
+
+-- Bảng exam_histories (lịch sử làm bài)
+CREATE TABLE exam_histories (
+    attempt_id SERIAL PRIMARY KEY,
+    exam_id INTEGER NOT NULL,
+    student_id INTEGER NOT NULL,
+    attempt_number INTEGER NOT NULL,
+    start_time TIMESTAMP WITH TIME ZONE,
+    end_time TIMESTAMP WITH TIME ZONE,
+    score FLOAT,
+    status VARCHAR(50) DEFAULT 'in_progress',
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (exam_id) REFERENCES exams(exam_id) ON DELETE CASCADE,
+    FOREIGN KEY (student_id) REFERENCES students(student_id) ON DELETE CASCADE
+);
+
+-- Bảng answers (có attempt_id)
+CREATE TABLE answers (
+    id SERIAL PRIMARY KEY,
+    question_id INTEGER NOT NULL,
+    student_id INTEGER NOT NULL,
+    option_id INTEGER,
+    text TEXT,
+    attempt_id INTEGER NOT NULL,
+    FOREIGN KEY (question_id) REFERENCES questions(question_id) ON DELETE CASCADE,
+    FOREIGN KEY (option_id) REFERENCES options(option_id) ON DELETE SET NULL,
+    FOREIGN KEY (student_id) REFERENCES students(student_id) ON DELETE CASCADE,
+    FOREIGN KEY (attempt_id) REFERENCES exam_histories(attempt_id) ON DELETE CASCADE
+);
+
+-- Bảng notifications
+CREATE TABLE notifications (
+    id SERIAL PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    content TEXT NOT NULL,
+    is_read BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    student_id INTEGER NOT NULL,
+    exam_id INTEGER,
+    FOREIGN KEY (student_id) REFERENCES students(student_id) ON DELETE CASCADE,
+    FOREIGN KEY (exam_id) REFERENCES exams(exam_id) ON DELETE CASCADE
+);
+
+-- Bảng ai_agents
+CREATE TABLE ai_agents (
+    agent_id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    provider VARCHAR(100),
+    version VARCHAR(50),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Bảng ai_results
+CREATE TABLE ai_results (
+    id SERIAL PRIMARY KEY,
+    agent_id INTEGER NOT NULL,
+    exam_id INTEGER NOT NULL,
+    student_id INTEGER NOT NULL,
+    question_id INTEGER,
+    answer_id INTEGER,
+    review TEXT,
+    score_suggestion FLOAT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (agent_id) REFERENCES ai_agents(agent_id) ON DELETE CASCADE,
+    FOREIGN KEY (exam_id) REFERENCES exams(exam_id) ON DELETE CASCADE,
+    FOREIGN KEY (student_id) REFERENCES students(student_id) ON DELETE CASCADE,
+    FOREIGN KEY (question_id) REFERENCES questions(question_id) ON DELETE CASCADE,
+    FOREIGN KEY (answer_id) REFERENCES answers(id) ON DELETE CASCADE
+);
+
+-- Indexes để tối ưu
+CREATE INDEX idx_exam_teacher ON exams(teacher_id);
+CREATE INDEX idx_question_exam ON questions(exam_id);
+CREATE INDEX idx_option_question ON options(question_id);
+CREATE INDEX idx_answer_question ON answers(question_id);
+CREATE INDEX idx_answer_student ON answers(student_id);
+CREATE INDEX idx_notification_student ON notifications(student_id);
+CREATE INDEX idx_ai_results_question ON ai_results(question_id);
+CREATE INDEX idx_ai_results_exam ON ai_results(exam_id);
+CREATE INDEX idx_ai_results_agent ON ai_results(agent_id);
+CREATE INDEX idx_exam_attempt_student ON exam_histories(student_id);
+
+
+-- Use DBML to define your database structure
+-- Docs: [https://dbml.dbdiagram.io/docs](https://dbml.dbdiagram.io/docs)
+
+https://dbdiagram.io/d/68d9e010d2b621e4224be325
+
+// Use DBML to define your database structure
+// Docs: [https://dbml.dbdiagram.io/docs](https://dbml.dbdiagram.io/docs)
+
+Table users {
+user_id integer [primary key]
+username varchar [not null, unique]
+email varchar [not null, unique]
+password varchar [not null]
+role varchar [not null]
+status varchar [default: 'active']
+created_at timestamp
+updated_at timestamp
+}
+
+// Table refresh_tokens (commented out in SQL)
+// Table refresh_tokens {
+//   id integer [primary key]
+//   user_id integer [not null]
+//   token text [not null]
+//   expires_at timestamp [not null]
+// }
+
+Table teachers {
+teacher_id integer [primary key]
+user_id integer [not null, unique]
+department varchar
+created_at timestamp
+updated_at timestamp
+}
+
+Table students {
+student_id integer [primary key]
+user_id integer [not null, unique]
+grade varchar
+created_at timestamp
+updated_at timestamp
+}
+
+Table exams {
+exam_id integer [primary key]
+title varchar [not null]
+description text
+start_time timestamp [not null]
+end_time timestamp [not null]
+duration integer [not null]
+teacher_id integer [not null]
+created_at timestamp
+updated_at timestamp
+}
+
+Table exams_students {
+exam_id integer [not null]
+student_id integer [not null]
+indexes {
+(exam_id, student_id) [pk]
+}
+}
+
+Table questions {
+question_id integer [primary key]
+content text [not null]
+type varchar [not null]
+score integer [not null]
+exam_id integer [not null]
+}
+
+Table options {
+option_id integer [primary key]
+content text [not null]
+is_correct boolean [not null]
+question_id integer [not null]
+}
+
+Table answers {
+id integer [primary key]
+question_id integer [not null]
+student_id integer [not null]
+option_id integer
+text text
+attempt_id integer [not null] 
+}
+
+Table notifications {
+id integer [primary key]
+title varchar [not null]
+content text [not null]
+is_read boolean [default: false]
+created_at timestamp
+student_id integer [not null]
+exam_id integer
+}
+
+Table ai_agents {
+  agent_id integer [primary key]
+  name varchar [not null]         // Tên agent, ví dụ "GPT-5", "Claude"
+  provider varchar                // OpenAI, Anthropic, Google...
+  version varchar
+  created_at timestamp
+}
+
+Table ai_results {
+  id integer [primary key]
+  agent_id integer [not null]     // Liên kết tới ai_agents
+  exam_id integer [not null]
+  student_id integer [not null]
+  question_id integer
+  answer_id integer
+  review text
+  score_suggestion float
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table exam_histories {
+  attempt_id integer [primary key]       
+  exam_id integer [not null]             
+  student_id integer [not null]          
+  attempt_number integer [not null]      
+  start_time timestamp                   
+  end_time timestamp                     
+  score float                            
+  status varchar [default: 'in_progress'] // in_progress, submitted, graded
+  created_at timestamp
+  updated_at timestamp
+}
+
+// relations
+Ref teacher_user: teachers.user_id > users.user_id
+Ref student_user: students.user_id > users.user_id
+Ref exam_teacher: exams.teacher_id > teachers.teacher_id
+Ref exam_students_exam: exams_students.exam_id > exams.exam_id
+Ref exam_students_student: exams_students.student_id > students.student_id
+Ref question_exam: questions.exam_id > exams.exam_id
+Ref option_question: options.question_id > questions.question_id
+Ref answer_question: answers.question_id > questions.question_id
+Ref answer_option: answers.option_id > options.option_id
+Ref answer_student: answers.student_id > students.student_id
+Ref notification_student: notifications.student_id > students.student_id
+Ref notification_exam: notifications.exam_id > exams.exam_id
+Ref ai_results_question: ai_results.question_id > questions.question_id
+Ref ai_results_exam: ai_results.exam_id > exams.exam_id
+Ref ai_results_agent: ai_results.agent_id > ai_agents.agent_id
+Ref exam_attempt_exam: exam_histories.exam_id > exams.exam_id
+Ref exam_attempt_student: exam_histories.student_id > students.student_id
+Ref answer_attempt: answers.attempt_id > exam_histories.attempt_id
+
+
