@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+transformers
+torch
+python-docx
+pdfplumber
+pydantic
+python-multipart
+
