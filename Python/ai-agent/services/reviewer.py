@@ -48,27 +48,41 @@ async def review_exam_with_gemini(exam_data: dict) -> dict:
 
 
 # Sample body exam data
-# exam_data = {
-#     "exam_title": "Đề thi môn Toán",
-#     "subject": "Toán",
+# {
+#   "exam": {
+#     "exam_title": "Đề kiểm tra chương 1 - Kiểm thử phần mềm",
+#     "subject": "Kiểm thử phần mềm",
 #     "questions": [
-#         {
-#             "question": "Câu hỏi 1",
-#             "answer": "Đáp án 1",
-#             "question_type": "multiple_choice",
-#             "difficulty": "easy"
-#         },
-#         {
-#             "question": "Câu hỏi 2",
-#             "answer": "Đáp án 2",
-#             "question_type": "short_answer",
-#             "difficulty": "medium"
-#         },
-#         {
-#             "question": "Câu hỏi 3",
-#             "answer": "Đáp án 3",
-#             "question_type": "true_false",
-#             "difficulty": "hard"
-#         }
+#       {
+#         "question": "Mục tiêu chính của kiểm thử phần mềm là gì?",
+#         "answer": "Phát hiện càng nhiều lỗi càng tốt trong thời gian kiểm thử xác định trước.",
+#         "question_type": "multiple_choice",
+#         "difficulty": "easy"
+#       },
+#       {
+#         "question": "Kiểm thử hộp trắng (White Box Testing) tập trung vào điều gì?",
+#         "answer": "Phủ các lệnh, nhánh và điều kiện bên trong mã nguồn.",
+#         "question_type": "multiple_choice",
+#         "difficulty": "medium"
+#       },
+#       {
+#         "question": "Trong mô hình RUP, công đoạn nào liên quan đến việc hiện thực và kiểm thử phần mềm?",
+#         "answer": "Construction (xây dựng).",
+#         "question_type": "multiple_choice",
+#         "difficulty": "medium"
+#       },
+#       {
+#         "question": "Kiểm thử hồi qui (Regression Testing) được thực hiện khi nào?",
+#         "answer": "Khi phần mềm có sự hiệu chỉnh hoặc nâng cấp để đảm bảo các chức năng cũ vẫn hoạt động đúng.",
+#         "question_type": "multiple_choice",
+#         "difficulty": "hard"
+#       },
+#       {
+#         "question": "Vì sao cần tự động hóa kiểm thử phần mềm?",
+#         "answer": "Để giảm chi phí, hạn chế lỗi do con người và tăng tốc độ kiểm thử.",
+#         "question_type": "multiple_choice",
+#         "difficulty": "medium"
+#       }
 #     ]
+#   }
 # }
