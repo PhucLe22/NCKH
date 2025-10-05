@@ -3,7 +3,9 @@ import { UserRepository } from '../user/user.repository';
 import { UnauthorizedException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
-import { CreateUserDto } from '../user/dto/createUser.dto';
+import { CreateUserDto } from '../user/dto/user.create.dto';
+import { Res } from '@nestjs/common';
+import express from 'express';
 
 @Injectable()
 export class AuthService {
@@ -38,5 +40,9 @@ export class AuthService {
             role: user.role,
           },
         };
-      }   
+      }
+      async logout(@Res({ passthrough: true }) res: express.Response) {
+        res.clearCookie('token');
+        return { message: 'Logout successful' };
+      }
 }

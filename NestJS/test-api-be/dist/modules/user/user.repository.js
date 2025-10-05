@@ -40,6 +40,14 @@ let UserRepository = class UserRepository extends typeorm_1.Repository {
         await this.remove(user);
         return user;
     }
+    async updateById(user_id, userbody) {
+        const user = await this.findOne({ where: { user_id } });
+        if (!user)
+            return null;
+        await this.update(user_id, userbody);
+        const updatedUser = await this.findOne({ where: { user_id } });
+        return updatedUser;
+    }
 };
 exports.UserRepository = UserRepository;
 exports.UserRepository = UserRepository = __decorate([

@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { UserRepository } from './user.repository';
 import { User } from './user.entity';
-import { Param, BadRequestException } from '@nestjs/common';
+import { Param, BadRequestException, Body } from '@nestjs/common';
+import { UpdateUserDto } from './dto/user.update.dto';
 
 @Injectable()
 export class UserService {
@@ -24,5 +25,8 @@ export class UserService {
     }
     async deleteById(@Param('id') id: number): Promise<User | null> {
         return this.userRepository.deleteById(id);
+    }
+    async updateById(@Param('id') id: number, @Body() body: UpdateUserDto): Promise<User | null> {
+        return this.userRepository.updateById(id, body);
     }
 }

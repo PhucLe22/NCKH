@@ -1,9 +1,15 @@
 import { AuthService } from './auth.service';
-import { CreateUserDto } from '../user/dto/createUser.dto';
+import { CreateUserDto } from '../user/dto/user.create.dto';
 import express from 'express';
+import { UpdateUserDto } from '../user/dto/user.update.dto';
+import { UserService } from '../user/user.service';
+import { JwtService } from '@nestjs/jwt';
+import { AuthDto } from './dto/auth.output';
 export declare class AuthController {
     private readonly authService;
-    constructor(authService: AuthService);
+    private readonly userService;
+    private readonly jwtService;
+    constructor(authService: AuthService, userService: UserService, jwtService: JwtService);
     register(dto: CreateUserDto): Promise<import("../user/user.entity").User>;
     login(res: express.Response, dto: {
         email: string;
@@ -19,6 +25,7 @@ export declare class AuthController {
             };
         };
     }>;
+    updateById(body: UpdateUserDto, req: express.Request): Promise<AuthDto>;
     logout(res: express.Response): Promise<{
         message: string;
     }>;

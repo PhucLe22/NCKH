@@ -1,6 +1,7 @@
 import { UserRepository } from '../user/user.repository';
 import { JwtService } from '@nestjs/jwt';
-import { CreateUserDto } from '../user/dto/createUser.dto';
+import { CreateUserDto } from '../user/dto/user.create.dto';
+import express from 'express';
 export declare class AuthService {
     private readonly userRepository;
     private readonly jwtService;
@@ -13,5 +14,8 @@ export declare class AuthService {
             email: string;
             role: string;
         };
+    }>;
+    logout(res: express.Response): Promise<{
+        message: string;
     }>;
 }

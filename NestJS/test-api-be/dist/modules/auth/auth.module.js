@@ -15,6 +15,8 @@ const jwt_strategy_1 = require("./jwt.strategy");
 const passport_1 = require("@nestjs/passport");
 const user_repository_1 = require("../user/user.repository");
 const jwt_1 = require("@nestjs/jwt");
+const jwt_2 = require("@nestjs/jwt");
+const user_module_1 = require("../user/user.module");
 let AuthModule = class AuthModule {
 };
 exports.AuthModule = AuthModule;
@@ -24,12 +26,15 @@ exports.AuthModule = AuthModule = __decorate([
                 global: true,
                 secret: process.env.JWT_SECRET || 'secretKey',
                 signOptions: { expiresIn: '1h' },
-            })],
+            }),
+            user_module_1.UserModule,
+        ],
         providers: [
             jwt_strategy_1.JwtStrategy,
             auth_service_1.AuthService,
             auth_repository_1.AuthRepository,
-            user_repository_1.UserRepository
+            user_repository_1.UserRepository,
+            jwt_2.JwtService,
         ],
         controllers: [auth_controller_1.AuthController],
     })

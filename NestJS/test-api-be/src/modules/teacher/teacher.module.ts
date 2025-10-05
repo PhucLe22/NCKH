@@ -4,11 +4,13 @@ import { TeacherController } from './teacher.controller';
 import { TeacherRepository } from './teacher.repository';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Teacher } from './teacher.entity';
+import { UserRepository } from '../user/user.repository';
 
 @Module({
   providers: [
     TeacherService,
-    TeacherRepository
+    TeacherRepository,
+    UserRepository,
   ],
   controllers: [TeacherController],
   imports: [TypeOrmModule.forFeature([Teacher])]

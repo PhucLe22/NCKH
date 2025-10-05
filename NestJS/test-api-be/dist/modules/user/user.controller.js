@@ -18,6 +18,7 @@ const user_service_1 = require("./user.service");
 const swagger_1 = require("@nestjs/swagger");
 const common_2 = require("@nestjs/common");
 const jwt_auth_guard_1 = require("../auth/jwt.auth.guard");
+const user_update_dto_1 = require("./dto/user.update.dto");
 let UserController = class UserController {
     constructor(userService) {
         this.userService = userService;
@@ -65,11 +66,17 @@ let UserController = class UserController {
         return response;
     }
     async deleteById(id) {
-        const user = await this.userService.deleteById(id);
-        if (!user) {
-            throw new common_1.NotFoundException('User not found');
+        const user = await this.userService.findById(id);
+        if (user.role === "admin") {
+            const user = await this.userService.deleteById(id);
+            if (!user) {
+                throw new common_1.NotFoundException('User not found');
+            }
+            return `Delete user successfully ${user.username}`;
         }
-        return `Delete user successfully ${user.username}`;
+        else {
+            throw new common_1.UnauthorizedException('User not authorized');
+        }
     }
     async getProfile(id) {
         if (!id) {
@@ -92,6 +99,19 @@ let UserController = class UserController {
                 throw error;
             }
             throw new common_1.UnauthorizedException('Error fetching user profile');
+        }
+    }
+    async updateById(id, body) {
+        const user = await this.userService.findById(id);
+        if (user.role === "admin") {
+            const user = await this.userService.updateById(id, body);
+            if (!user) {
+                throw new common_1.NotFoundException('User not found');
+            }
+            return user;
+        }
+        else {
+            throw new common_1.UnauthorizedException('User not authorized');
         }
     }
 };
@@ -139,6 +159,15 @@ __decorate([
     __metadata("design:paramtypes", [Number]),
     __metadata("design:returntype", Promise)
 ], UserController.prototype, "getProfile", null);
+__decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.Put)('update/:id'),
+    __param(0, (0, common_2.Param)('id')),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number, user_update_dto_1.UpdateUserDto]),
+    __metadata("design:returntype", Promise)
+], UserController.prototype, "updateById", null);
 exports.UserController = UserController = __decorate([
     (0, swagger_1.ApiTags)('users'),
     (0, common_1.Controller)('user'),

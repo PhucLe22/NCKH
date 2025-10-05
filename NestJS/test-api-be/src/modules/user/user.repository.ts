@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { DataSource, Repository } from 'typeorm';
 import { User } from './user.entity';
-import { CreateUserDto } from './dto/createUser.dto';
+import { CreateUserDto } from './dto/user.create.dto';
+import { UpdateUserDto } from './dto/user.update.dto';
 
 @Injectable()
 export class UserRepository extends Repository<User> {
@@ -31,5 +32,14 @@ export class UserRepository extends Repository<User> {
     if (!user) return null; 
     await this.remove(user); 
     return user; 
+  }
+  async updateById(user_id: number, userbody: UpdateUserDto): Promise<User | null> {
+    const user = await this.findOne({ where: { user_id } });
+    if (!user) return null;
+  
+    await this.update(user_id, userbody);
+    const updatedUser = await this.findOne({ where: { user_id } });
+  
+    return updatedUser;
   }
 }

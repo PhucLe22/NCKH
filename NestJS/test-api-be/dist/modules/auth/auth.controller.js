@@ -15,11 +15,17 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthController = void 0;
 const common_1 = require("@nestjs/common");
 const auth_service_1 = require("./auth.service");
-const createUser_dto_1 = require("../user/dto/createUser.dto");
+const user_create_dto_1 = require("../user/dto/user.create.dto");
 const express_1 = require("express");
+const user_update_dto_1 = require("../user/dto/user.update.dto");
+const user_service_1 = require("../user/user.service");
+const jwt_auth_guard_1 = require("../auth/jwt.auth.guard");
+const jwt_1 = require("@nestjs/jwt");
 let AuthController = class AuthController {
-    constructor(authService) {
+    constructor(authService, userService, jwtService) {
         this.authService = authService;
+        this.userService = userService;
+        this.jwtService = jwtService;
     }
     async register(dto) {
         const user = await this.authService.register(dto);
@@ -35,8 +41,22 @@ let AuthController = class AuthController {
         });
         return { message: 'Login successful', user };
     }
+    async updateById(body, req) {
+        const token = req.cookies?.token;
+        const decoded = this.jwtService.decode(token);
+        const user = await this.userService.updateById(decoded.sub, body);
+        const authDto = {
+            email: user.email,
+            username: user.username,
+            role: user.role,
+            status: user.status,
+            createdAt: user.createdAt,
+            updatedAt: user.updatedAt,
+        };
+        return authDto;
+    }
     async logout(res) {
-        res.clearCookie('token');
+        await this.authService.logout(res);
         return { message: 'Logout successful' };
     }
 };
@@ -45,7 +65,7 @@ __decorate([
     (0, common_1.Post)('register'),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [createUser_dto_1.CreateUserDto]),
+    __metadata("design:paramtypes", [user_create_dto_1.CreateUserDto]),
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "register", null);
 __decorate([
@@ -57,6 +77,16 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "login", null);
 __decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.Put)('update-profile'),
+    __param(0, (0, common_1.Body)()),
+    __param(1, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [user_update_dto_1.UpdateUserDto, Object]),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "updateById", null);
+__decorate([
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Post)('logout'),
     __param(0, (0, common_1.Res)({ passthrough: true })),
     __metadata("design:type", Function),
@@ -65,6 +95,6 @@ __decorate([
 ], AuthController.prototype, "logout", null);
 exports.AuthController = AuthController = __decorate([
     (0, common_1.Controller)('auth'),
-    __metadata("design:paramtypes", [auth_service_1.AuthService])
+    __metadata("design:paramtypes", [auth_service_1.AuthService, user_service_1.UserService, jwt_1.JwtService])
 ], AuthController);
 //# sourceMappingURL=auth.controller.js.map

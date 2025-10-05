@@ -1,5 +1,6 @@
 import { UserRepository } from './user.repository';
 import { User } from './user.entity';
+import { UpdateUserDto } from './dto/user.update.dto';
 export declare class UserService {
     private readonly userRepository;
     constructor(userRepository: UserRepository);
@@ -8,4 +9,5 @@ export declare class UserService {
     findByName(username: string): Promise<User | null>;
     findById(id: number): Promise<User | null>;
     deleteById(id: number): Promise<User | null>;
+    updateById(id: number, body: UpdateUserDto): Promise<User | null>;
 }

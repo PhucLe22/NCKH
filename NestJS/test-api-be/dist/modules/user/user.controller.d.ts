@@ -1,4 +1,5 @@
 import { UserService } from './user.service';
+import { UpdateUserDto } from './dto/user.update.dto';
 export declare class UserController {
     private readonly userService;
     constructor(userService: UserService);
@@ -29,4 +30,5 @@ export declare class UserController {
         email: string;
         role: string;
     }>;
+    updateById(id: number, body: UpdateUserDto): Promise<import("./user.entity").User>;
 }

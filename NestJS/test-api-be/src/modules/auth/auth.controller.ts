@@ -1,11 +1,16 @@
-import { Body, Controller, Post, Res } from '@nestjs/common';
+import { Body, Controller, Post, Res, Put, UseGuards, Req } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { CreateUserDto } from '../user/dto/createUser.dto';
+import { CreateUserDto } from '../user/dto/user.create.dto';
 import express from 'express';
+import { UpdateUserDto } from '../user/dto/user.update.dto';
+import { UserService } from '../user/user.service';
+import { JwtAuthGuard } from '../auth/jwt.auth.guard';
+import { JwtService } from '@nestjs/jwt';
+import { AuthDto } from './dto/auth.output';
 
 @Controller('auth')
 export class AuthController {
-    constructor(private readonly authService: AuthService) {}
+    constructor(private readonly authService: AuthService, private readonly userService: UserService, private readonly jwtService: JwtService) {}
 
     @Post('register')
     async register(@Body() dto: CreateUserDto) {
@@ -26,10 +31,28 @@ export class AuthController {
     
       return { message: 'Login successful', user };
     }
-    
+
+    @UseGuards(JwtAuthGuard)
+    @Put('update-profile')
+    async updateById(@Body() body: UpdateUserDto, @Req() req: express.Request) {
+      const token = req.cookies?.token;
+      const decoded: any = this.jwtService.decode(token);
+      const user = await this.userService.updateById(decoded.sub, body);
+      const authDto: AuthDto = {
+        email: user.email,
+        username: user.username,
+        role: user.role,
+        status: user.status,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt,
+      };
+      return authDto;
+    }
+
+    @UseGuards(JwtAuthGuard)
     @Post('logout')
     async logout(@Res({ passthrough: true }) res: express.Response) {
-      res.clearCookie('token');
+      await this.authService.logout(res);
       return { message: 'Logout successful' };
-    }   
+    }
 }

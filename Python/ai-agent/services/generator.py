@@ -80,7 +80,6 @@ async def generate_questions_from_text(text: str):
     if not text:
         raise HTTPException(status_code=400, detail="Provide a text")
 
-    # Call the actual question generation function
     key_points = await extractor(text)
     questions = await reviewer(key_points)
     

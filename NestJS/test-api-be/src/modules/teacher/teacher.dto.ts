@@ -1,9 +1,8 @@
 import { IsNotEmpty } from "class-validator";
 
-export class AuthDto {
+export class CreateTeacherDto {
     @IsNotEmpty()
-    email: string;
+    department: string;
     @IsNotEmpty()
-    password: string;
+    user_id: number;
 }
-    

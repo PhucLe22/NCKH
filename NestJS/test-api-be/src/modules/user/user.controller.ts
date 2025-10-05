@@ -1,8 +1,9 @@
-import { Controller, Get, UseGuards, Post, Body, NotFoundException, BadRequestException, Delete, Req, UnauthorizedException } from '@nestjs/common';
+import { Controller, Get, UseGuards, Put, Body, NotFoundException, BadRequestException, Delete, Req, UnauthorizedException } from '@nestjs/common';
 import { UserService } from './user.service';
 import { ApiTags } from '@nestjs/swagger';
 import { Param } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/jwt.auth.guard';
+import { UpdateUserDto } from './dto/user.update.dto';
 
 @ApiTags('users')
 @Controller('user') 
@@ -61,12 +62,20 @@ export class UserController {
     @UseGuards(JwtAuthGuard)
     @Delete('delete/:id')
     async deleteById(@Param('id') id: number) {
+      const user = await this.userService.findById(id);
+      if(user.role === "admin")
+      {
         const user = await this.userService.deleteById(id);
         if(!user)
         {
             throw new NotFoundException('User not found');
         }
         return `Delete user successfully ${user.username}`;
+      }
+      else
+      {
+        throw new UnauthorizedException('User not authorized');
+      }
     }
     @UseGuards(JwtAuthGuard)
     @Get('profile/:id')
@@ -90,6 +99,23 @@ export class UserController {
           throw error;
         }
         throw new UnauthorizedException('Error fetching user profile');
+      }
+    }
+    @UseGuards(JwtAuthGuard)
+    @Put('update/:id')
+    async updateById(@Param('id') id: number, @Body() body: UpdateUserDto) {
+      const user = await this.userService.findById(id);
+      if(user.role === "admin")
+      {
+        const user = await this.userService.updateById(id, body);
+        if (!user) {
+          throw new NotFoundException('User not found');
+        }
+        return user;
+      }
+      else
+      {
+        throw new UnauthorizedException('User not authorized');
       }
     }
 }

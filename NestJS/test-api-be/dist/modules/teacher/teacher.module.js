@@ -13,6 +13,7 @@ const teacher_controller_1 = require("./teacher.controller");
 const teacher_repository_1 = require("./teacher.repository");
 const typeorm_1 = require("@nestjs/typeorm");
 const teacher_entity_1 = require("./teacher.entity");
+const user_repository_1 = require("../user/user.repository");
 let TeacherModule = class TeacherModule {
 };
 exports.TeacherModule = TeacherModule;
@@ -20,7 +21,8 @@ exports.TeacherModule = TeacherModule = __decorate([
     (0, common_1.Module)({
         providers: [
             teacher_service_1.TeacherService,
-            teacher_repository_1.TeacherRepository
+            teacher_repository_1.TeacherRepository,
+            user_repository_1.UserRepository,
         ],
         controllers: [teacher_controller_1.TeacherController],
         imports: [typeorm_1.TypeOrmModule.forFeature([teacher_entity_1.Teacher])]
