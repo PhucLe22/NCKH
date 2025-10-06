@@ -66,7 +66,6 @@ async def generate_questions_endpoint_from_text(request: GenerateQuestionsReques
 async def generate_questions_endpoint_from_file(
     file: UploadFile = File(None), 
     ):
-    print("hello")
     try:
         if file:
             return await generate_questions_from_file(file=file)
