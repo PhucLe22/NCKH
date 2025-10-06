@@ -1,9 +1,12 @@
 import { TeacherRepository } from './teacher.repository';
 import { UserRepository } from '../user/user.repository';
-import { CreateUserDto } from '../user/dto/user.create.dto';
+import { CreateTeacherDto } from './dto/teacher.create.dto';
 export declare class TeacherService {
     private readonly teacherRepository;
     private readonly userRepository;
     constructor(teacherRepository: TeacherRepository, userRepository: UserRepository);
-    createTeacher(body: CreateUserDto): Promise<import("../user/user.entity").User>;
+    createTeacher(body: CreateTeacherDto): Promise<{
+        message: string;
+        teacher: import("./teacher.entity").Teacher;
+    }>;
 }

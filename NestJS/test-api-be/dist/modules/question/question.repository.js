@@ -18,6 +18,18 @@ let QuestionRepository = class QuestionRepository extends typeorm_1.Repository {
         super(question_entity_1.Question, dataSource.createEntityManager());
         this.dataSource = dataSource;
     }
+    async createQuestion(question) {
+        return this.save(question);
+    }
+    async findAll() {
+        return this.find();
+    }
+    async deleteById(id) {
+        return this.delete(id);
+    }
+    async updateById(id, question) {
+        return this.update(id, question);
+    }
 };
 exports.QuestionRepository = QuestionRepository;
 exports.QuestionRepository = QuestionRepository = __decorate([

@@ -5,25 +5,51 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AiAgentService = void 0;
 const common_1 = require("@nestjs/common");
 const axios_1 = require("axios");
+const question_repository_1 = require("../question/question.repository");
+const exam_repository_1 = require("../exam/exam.repository");
 let AiAgentService = class AiAgentService {
-    constructor() {
-        this.aiUrl = "http://python-ai:8000/api";
+    constructor(aiUrl, questionRepository, examRepository) {
+        this.aiUrl = aiUrl;
+        this.questionRepository = questionRepository;
+        this.examRepository = examRepository;
     }
-    async generateQuestions(text) {
-        const res = await axios_1.default.post(`${this.aiUrl}/generate-questions`, { text });
-        return res.data;
+    async generateQuestions(text, examId) {
+        const response = await axios_1.default.post(`${this.aiUrl}/generate-questions-from-text`, { text });
+        const questions = response.data;
+        const selectedExam = await this.examRepository.findOne({ where: { exam_id: examId } });
+        const savedQuestions = [];
+        for (const question of questions) {
+            const savedQuestion = await this.questionRepository.createQuestion({
+                ...question,
+                type: question.type || 'multiple_choice',
+                score: question.score || null,
+                exam: selectedExam,
+                options: question.options || []
+            });
+            savedQuestions.push(savedQuestion);
+        }
+        return savedQuestions;
     }
     async reviewExam(examId) {
-        const res = await axios_1.default.post(`${this.aiUrl}/review-exam`, { examId });
+        const res = await axios_1.default.post(`${this.aiUrl}/generate-questions-from-file`, { examId });
         return res.data;
     }
 };
 exports.AiAgentService = AiAgentService;
 exports.AiAgentService = AiAgentService = __decorate([
-    (0, common_1.Injectable)()
+    (0, common_1.Injectable)(),
+    __param(0, (0, common_1.Inject)('AI_AGENT_URL')),
+    __metadata("design:paramtypes", [String, question_repository_1.QuestionRepository,
+        exam_repository_1.ExamRepository])
 ], AiAgentService);
 //# sourceMappingURL=ai_agent.service.js.map

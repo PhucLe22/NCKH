@@ -30,9 +30,16 @@ let TeacherService = class TeacherService {
             username: body.username,
             email: body.email,
             password: hashedPassword,
-            role: role,
+            role: 'teacher',
         });
-        return await this.userRepository.save(newUser);
+        const newTeacher = await this.teacherRepository.addTeacher({
+            userId: newUser.user_id.toString(),
+            department: body.department,
+        });
+        return {
+            message: 'Teacher registered successfully',
+            teacher: newTeacher,
+        };
     }
 };
 exports.TeacherService = TeacherService;

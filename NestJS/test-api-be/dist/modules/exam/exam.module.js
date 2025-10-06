@@ -13,6 +13,9 @@ const exam_controller_1 = require("./exam.controller");
 const exam_repository_1 = require("./exam.repository");
 const typeorm_1 = require("@nestjs/typeorm");
 const exam_entity_1 = require("./exam.entity");
+const teacher_repository_1 = require("../teacher/teacher.repository");
+const jwt_1 = require("@nestjs/jwt");
+const auth_module_1 = require("../auth/auth.module");
 let ExamModule = class ExamModule {
 };
 exports.ExamModule = ExamModule;
@@ -20,10 +23,14 @@ exports.ExamModule = ExamModule = __decorate([
     (0, common_1.Module)({
         providers: [
             exam_service_1.ExamService,
-            exam_repository_1.ExamRepository
+            exam_repository_1.ExamRepository,
+            teacher_repository_1.TeacherRepository,
+            jwt_1.JwtService,
+            auth_module_1.AuthModule,
         ],
         controllers: [exam_controller_1.ExamController],
         imports: [typeorm_1.TypeOrmModule.forFeature([exam_entity_1.Exam])],
+        exports: [exam_service_1.ExamService],
     })
 ], ExamModule);
 //# sourceMappingURL=exam.module.js.map

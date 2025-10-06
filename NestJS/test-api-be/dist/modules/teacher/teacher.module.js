@@ -14,18 +14,22 @@ const teacher_repository_1 = require("./teacher.repository");
 const typeorm_1 = require("@nestjs/typeorm");
 const teacher_entity_1 = require("./teacher.entity");
 const user_repository_1 = require("../user/user.repository");
+const jwt_1 = require("@nestjs/jwt");
+const exam_module_1 = require("../exam/exam.module");
 let TeacherModule = class TeacherModule {
 };
 exports.TeacherModule = TeacherModule;
 exports.TeacherModule = TeacherModule = __decorate([
     (0, common_1.Module)({
+        imports: [typeorm_1.TypeOrmModule.forFeature([teacher_entity_1.Teacher]), exam_module_1.ExamModule],
         providers: [
             teacher_service_1.TeacherService,
             teacher_repository_1.TeacherRepository,
             user_repository_1.UserRepository,
+            jwt_1.JwtService,
         ],
         controllers: [teacher_controller_1.TeacherController],
-        imports: [typeorm_1.TypeOrmModule.forFeature([teacher_entity_1.Teacher])]
+        exports: [teacher_service_1.TeacherService],
     })
 ], TeacherModule);
 //# sourceMappingURL=teacher.module.js.map

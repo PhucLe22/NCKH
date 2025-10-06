@@ -13,10 +13,32 @@ exports.TeacherRepository = void 0;
 const common_1 = require("@nestjs/common");
 const typeorm_1 = require("typeorm");
 const teacher_entity_1 = require("./teacher.entity");
+const user_entity_1 = require("../user/user.entity");
 let TeacherRepository = class TeacherRepository extends typeorm_1.Repository {
     constructor(dataSource) {
         super(teacher_entity_1.Teacher, dataSource.createEntityManager());
         this.dataSource = dataSource;
+    }
+    async addTeacher(data) {
+        const teacher = new teacher_entity_1.Teacher();
+        teacher.department = data.department;
+        teacher.user = await this.dataSource
+            .getRepository(user_entity_1.User)
+            .findOne({ where: { user_id: parseInt(data.userId) } });
+        teacher.createdAt = new Date();
+        teacher.updatedAt = new Date();
+        return this.save(teacher);
+    }
+    async getTeacherByUserId(userId) {
+        return this.findOne({
+            where: {
+                user: { user_id: userId },
+            },
+            relations: ['user'],
+        });
+    }
+    async getTeacherById(id) {
+        return this.findOne({ where: { teacher_id: id } });
     }
 };
 exports.TeacherRepository = TeacherRepository;

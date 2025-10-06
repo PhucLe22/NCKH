@@ -24,7 +24,7 @@ __decorate([
 __decorate([
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
-], CreateTeacherDto.prototype, "departmentId", void 0);
+], CreateTeacherDto.prototype, "department", void 0);
 __decorate([
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)

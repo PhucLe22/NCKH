@@ -15,12 +15,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.TeacherController = void 0;
 const common_1 = require("@nestjs/common");
 const teacher_service_1 = require("./teacher.service");
-const user_create_dto_1 = require("../user/dto/user.create.dto");
+const teacher_create_dto_1 = require("./dto/teacher.create.dto");
 let TeacherController = class TeacherController {
     constructor(teacherService) {
         this.teacherService = teacherService;
     }
     createTeacher(body) {
+        body.role = 'teacher';
         return this.teacherService.createTeacher(body);
     }
 };
@@ -29,7 +30,7 @@ __decorate([
     (0, common_1.Post)('register'),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [user_create_dto_1.CreateUserDto]),
+    __metadata("design:paramtypes", [teacher_create_dto_1.CreateTeacherDto]),
     __metadata("design:returntype", void 0)
 ], TeacherController.prototype, "createTeacher", null);
 exports.TeacherController = TeacherController = __decorate([

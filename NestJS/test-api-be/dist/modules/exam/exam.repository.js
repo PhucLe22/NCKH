@@ -18,6 +18,17 @@ let ExamRepository = class ExamRepository extends typeorm_1.Repository {
         super(exam_entity_1.Exam, dataSource.createEntityManager());
         this.dataSource = dataSource;
     }
+    async createExam(exam) {
+        return this.save(exam);
+    }
+    async findAll() {
+        return this.find({
+            relations: ['questions'],
+        });
+    }
+    async findById(id) {
+        return this.findById(id);
+    }
 };
 exports.ExamRepository = ExamRepository;
 exports.ExamRepository = ExamRepository = __decorate([

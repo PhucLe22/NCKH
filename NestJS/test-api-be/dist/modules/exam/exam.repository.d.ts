@@ -3,4 +3,7 @@ import { Exam } from './exam.entity';
 export declare class ExamRepository extends Repository<Exam> {
     private dataSource;
     constructor(dataSource: DataSource);
+    createExam(exam: Exam): Promise<Exam>;
+    findAll(): Promise<Exam[]>;
+    findById(id: number): any;
 }

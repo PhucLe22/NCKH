@@ -1,5 +1,5 @@
 export declare class CreateTeacherDto {
     userId: string;
-    departmentId: string;
+    department: string;
     role: string;
 }
