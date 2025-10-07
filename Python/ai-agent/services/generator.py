@@ -17,10 +17,9 @@ async def extractor(text: str):
 async def reviewer(key_points: str):
     prompt = f"""
     Dựa trên các ý chính sau, hãy tạo ra bộ câu hỏi:
-    - 1 câu trắc nghiệm (MCQ) có 4 đáp án A, B, C, D và chỉ rõ đáp án đúng
-    - 1 câu tự luận (Essay)
+    - 1 câu trắc nghiệm (MCQ) có 4 đáp án A, B, C, D và chỉ rõ đáp án đúng(nội dung ngắn)
+    - 1 câu tự luận nội dung cô đọng dễ hiểu ngắn gọn (Essay)
     - 1 câu Đúng/Sai (True/False)
-
     Ý chính:
     {key_points}
     """

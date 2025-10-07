@@ -8,4 +8,19 @@ export class AuthRepository extends Repository<User> {
     constructor(private dataSource: DataSource) {
         super(User, dataSource.createEntityManager());
     }
+
+   // user.repository.ts
+async updatePassword(user_id: number, hash: string): Promise<void> {
+  if (!user_id || isNaN(Number(user_id))) {
+    throw new Error('Invalid user ID');
+  }
+
+  await this.createQueryBuilder()
+    .update(User)
+    .set({ password: hash }) // ✅ Dùng hash, không phải newPassword
+    .where('user_id = :user_id', { user_id })
+    .execute();
+}
+
+
 }

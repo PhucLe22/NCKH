@@ -1,6 +1,7 @@
 import { AuthService } from './auth.service';
 import { CreateUserDto } from '../user/dto/createUser.dto';
 import express from 'express';
+import { UpdatePasswordDto } from './auth.dto';
 export declare class AuthController {
     private readonly authService;
     constructor(authService: AuthService);
@@ -20,6 +21,12 @@ export declare class AuthController {
         };
     }>;
     logout(res: express.Response): Promise<{
+        message: string;
+    }>;
+    forgotPassword(email: string, req: express.Request): Promise<{
+        message: string;
+    }>;
+    updatePassword(req: express.Request, dto: UpdatePasswordDto): Promise<{
         message: string;
     }>;
 }

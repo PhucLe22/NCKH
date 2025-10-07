@@ -18,6 +18,16 @@ let AuthRepository = class AuthRepository extends typeorm_1.Repository {
         super(user_entity_1.User, dataSource.createEntityManager());
         this.dataSource = dataSource;
     }
+    async updatePassword(user_id, hash) {
+        if (!user_id || isNaN(Number(user_id))) {
+            throw new Error('Invalid user ID');
+        }
+        await this.createQueryBuilder()
+            .update(user_entity_1.User)
+            .set({ password: hash })
+            .where('user_id = :user_id', { user_id })
+            .execute();
+    }
 };
 exports.AuthRepository = AuthRepository;
 exports.AuthRepository = AuthRepository = __decorate([

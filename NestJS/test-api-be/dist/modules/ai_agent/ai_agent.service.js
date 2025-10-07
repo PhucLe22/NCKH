@@ -8,7 +8,19 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AiAgentService = void 0;
 const common_1 = require("@nestjs/common");
+const axios_1 = require("axios");
 let AiAgentService = class AiAgentService {
+    constructor() {
+        this.aiUrl = "http://python-ai:8000/api";
+    }
+    async generateQuestions(text) {
+        const res = await axios_1.default.post(`${this.aiUrl}/generate-questions`, { text });
+        return res.data;
+    }
+    async reviewExam(examId) {
+        const res = await axios_1.default.post(`${this.aiUrl}/review-exam`, { examId });
+        return res.data;
+    }
 };
 exports.AiAgentService = AiAgentService;
 exports.AiAgentService = AiAgentService = __decorate([
