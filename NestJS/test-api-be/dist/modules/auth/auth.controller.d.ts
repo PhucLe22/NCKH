@@ -5,6 +5,7 @@ import { UpdateUserDto } from '../user/dto/user.update.dto';
 import { UserService } from '../user/user.service';
 import { JwtService } from '@nestjs/jwt';
 import { AuthDto } from './dto/auth.output';
+import { UpdatePasswordDto } from './dto/auth.forgot';
 export declare class AuthController {
     private readonly authService;
     private readonly userService;
@@ -27,6 +28,12 @@ export declare class AuthController {
     }>;
     updateById(body: UpdateUserDto, req: express.Request): Promise<AuthDto>;
     logout(res: express.Response): Promise<{
+        message: string;
+    }>;
+    forgotPassword(email: string, req: express.Request): Promise<{
+        message: string;
+    }>;
+    updatePassword(req: express.Request, dto: UpdatePasswordDto): Promise<{
         message: string;
     }>;
 }

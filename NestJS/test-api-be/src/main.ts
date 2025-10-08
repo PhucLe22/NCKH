@@ -3,7 +3,8 @@ import { AppModule } from './app.module';
 import {ConfigService} from '@nestjs/config';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import {ValidationPipe} from '@nestjs/common';
-const cookieParser = require('cookie-parser');
+import * as session from 'express-session';
+import * as cookieParser from 'cookie-parser';
 
 
 async function bootstrap() {
@@ -13,6 +14,19 @@ async function bootstrap() {
   const clientPort = configService.get<number>('CLIENT_PORT') || 5173;
 
   app.use(cookieParser());
+
+  app.use(
+    session({
+      secret: process.env.SESSION_SECRET || 'my-secret-key', 
+      resave: false,
+      saveUninitialized: false,
+      cookie: {
+        maxAge: 5 * 60 * 1000, 
+        httpOnly: true,
+        secure: false, 
+      },
+    }),
+  );
 
   app.enableCors({
     origin: `http://localhost:${clientPort}`, 

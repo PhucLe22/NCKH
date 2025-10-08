@@ -5,13 +5,24 @@ const app_module_1 = require("./app.module");
 const config_1 = require("@nestjs/config");
 const swagger_1 = require("@nestjs/swagger");
 const common_1 = require("@nestjs/common");
-const cookieParser = require('cookie-parser');
+const session = require("express-session");
+const cookieParser = require("cookie-parser");
 async function bootstrap() {
     const app = await core_1.NestFactory.create(app_module_1.AppModule);
     const configService = app.get(config_1.ConfigService);
     const serverPort = configService.get('SERVER_PORT') || 3001;
     const clientPort = configService.get('CLIENT_PORT') || 5173;
     app.use(cookieParser());
+    app.use(session({
+        secret: process.env.SESSION_SECRET || 'my-secret-key',
+        resave: false,
+        saveUninitialized: false,
+        cookie: {
+            maxAge: 5 * 60 * 1000,
+            httpOnly: true,
+            secure: false,
+        },
+    }));
     app.enableCors({
         origin: `http://localhost:${clientPort}`,
         methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',

@@ -21,6 +21,7 @@ const user_update_dto_1 = require("../user/dto/user.update.dto");
 const user_service_1 = require("../user/user.service");
 const jwt_auth_guard_1 = require("../auth/jwt.auth.guard");
 const jwt_1 = require("@nestjs/jwt");
+const auth_forgot_1 = require("./dto/auth.forgot");
 let AuthController = class AuthController {
     constructor(authService, userService, jwtService) {
         this.authService = authService;
@@ -59,6 +60,26 @@ let AuthController = class AuthController {
         await this.authService.logout(res);
         return { message: 'Logout successful' };
     }
+    async forgotPassword(email, req) {
+        try {
+            await this.authService.sendForgotPasswordEmail(req, email);
+            return { message: 'OTP has been sent to your email for confirmation.' };
+        }
+        catch (error) {
+            console.error(error);
+            throw new common_1.InternalServerErrorException('Send mail failed');
+        }
+    }
+    async updatePassword(req, dto) {
+        try {
+            await this.authService.updatePassword(req, dto.email, dto.otp, dto.newPassword);
+            return { message: 'Password updated successfully.' };
+        }
+        catch (error) {
+            console.error(error);
+            throw new common_1.InternalServerErrorException('Update password failed');
+        }
+    }
 };
 exports.AuthController = AuthController;
 __decorate([
@@ -93,6 +114,22 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "logout", null);
+__decorate([
+    (0, common_1.Post)('forgotPassword'),
+    __param(0, (0, common_1.Body)('email')),
+    __param(1, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "forgotPassword", null);
+__decorate([
+    (0, common_1.Post)('updatePassword'),
+    __param(0, (0, common_1.Req)()),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, auth_forgot_1.UpdatePasswordDto]),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "updatePassword", null);
 exports.AuthController = AuthController = __decorate([
     (0, common_1.Controller)('auth'),
     __metadata("design:paramtypes", [auth_service_1.AuthService, user_service_1.UserService, jwt_1.JwtService])

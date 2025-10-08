@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Res, Put, UseGuards, Req } from '@nestjs/common';
+import { Body, Controller, Post, Res, Put, UseGuards, Req, InternalServerErrorException } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateUserDto } from '../user/dto/user.create.dto';
 import express from 'express';
@@ -7,6 +7,7 @@ import { UserService } from '../user/user.service';
 import { JwtAuthGuard } from '../auth/jwt.auth.guard';
 import { JwtService } from '@nestjs/jwt';
 import { AuthDto } from './dto/auth.output';
+import { UpdatePasswordDto } from './dto/auth.forgot';
 
 @Controller('auth')
 export class AuthController {
@@ -55,4 +56,26 @@ export class AuthController {
       await this.authService.logout(res);
       return { message: 'Logout successful' };
     }
+
+    @Post('forgotPassword')
+    async forgotPassword(@Body('email') email: string, @Req() req: express.Request) {
+    try {
+      await this.authService.sendForgotPasswordEmail(req, email);
+      return { message: 'OTP has been sent to your email for confirmation.' };
+    } catch (error) {
+      console.error(error);
+      throw new InternalServerErrorException('Send mail failed');
+    }
+  }
+
+  @Post('updatePassword')
+    async updatePassword(@Req() req: express.Request, @Body() dto: UpdatePasswordDto) {
+      try {
+        await this.authService.updatePassword(req, dto.email, dto.otp, dto.newPassword);
+        return { message: 'Password updated successfully.' };
+      } catch (error) {
+        console.error(error);
+        throw new InternalServerErrorException('Update password failed');
+      }
+  }
 }

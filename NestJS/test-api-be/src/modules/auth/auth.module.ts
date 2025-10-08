@@ -8,6 +8,7 @@ import { UserRepository } from '../user/user.repository';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtService } from '@nestjs/jwt';
 import { UserModule } from '../user/user.module';
+
 @Module({
   imports: [PassportModule.register({ defaultStrategy: 'jwt' }), JwtModule.register({
     global: true,
