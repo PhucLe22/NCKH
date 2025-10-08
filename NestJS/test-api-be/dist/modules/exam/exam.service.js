@@ -14,6 +14,7 @@ const common_1 = require("@nestjs/common");
 const exam_repository_1 = require("./exam.repository");
 const exam_entity_1 = require("./exam.entity");
 const jwt_1 = require("@nestjs/jwt");
+const common_2 = require("@nestjs/common");
 const teacher_repository_1 = require("../teacher/teacher.repository");
 let ExamService = class ExamService {
     constructor(examRepository, jwtService, teacherRepository) {
@@ -37,6 +38,40 @@ let ExamService = class ExamService {
         exam.teacher = teacher;
         const createdExam = await this.examRepository.createExam(exam);
         return createdExam;
+    }
+    async updateExamById(exam_id, UpdateExamDto, req) {
+        const token = req.cookies?.token;
+        const decoded = this.jwtService.decode(token);
+        const teacher = await this.teacherRepository.getTeacherByUserId(decoded.sub);
+        if (!teacher) {
+            throw new common_2.NotFoundException('Teacher not found for this user!');
+        }
+        const examToUpdate = await this.examRepository.findExamById(exam_id);
+        if (!examToUpdate) {
+            throw new common_2.NotFoundException(`Exam not found with ID: ${exam_id}!`);
+        }
+        if (examToUpdate.teacher.teacher_id !== teacher.teacher_id) {
+            throw new common_2.ForbiddenException('You do not have permission to edit this exam!');
+        }
+        await this.examRepository.updateExam(exam_id, UpdateExamDto);
+        return { message: 'Update exam successfully!' };
+    }
+    async deleteExamById(exam_id, req) {
+        const token = req.cookies?.token;
+        const decoded = this.jwtService.decode(token);
+        const teacher = await this.teacherRepository.getTeacherByUserId(decoded.sub);
+        if (!teacher) {
+            throw new common_2.NotFoundException('Teacher not found for this user!');
+        }
+        const examToDelete = await this.examRepository.findExamById(exam_id);
+        if (!examToDelete) {
+            throw new common_2.NotFoundException(`Exam not found with ID: ${exam_id}!`);
+        }
+        if (examToDelete.teacher.teacher_id !== teacher.teacher_id) {
+            throw new common_2.ForbiddenException('You do not have permission to delete this exam!');
+        }
+        await this.examRepository.deleteExam(exam_id);
+        return { message: 'Delete exam successfully!' };
     }
 };
 exports.ExamService = ExamService;

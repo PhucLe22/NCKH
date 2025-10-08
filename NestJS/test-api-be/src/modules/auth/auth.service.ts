@@ -20,7 +20,7 @@ export class AuthService {
     private readonly authRepository: AuthRepository,
     private readonly userRepository: UserRepository,
     private readonly jwtService: JwtService,
-  ) {}
+  ) { }
 
   async register(dto: CreateUserDto) {
     const hash = await bcrypt.hash(dto.password, 10);
@@ -38,7 +38,7 @@ export class AuthService {
     const payload = { sub: user.user_id, email: user.email, role: user.role };
     const token = this.jwtService.sign(payload, {
       secret: process.env.JWT_SECRET,
-      expiresIn: '2m',
+      expiresIn: '10m',
     });
 
     return {
@@ -62,11 +62,11 @@ export class AuthService {
       service: 'gmail',
       auth: {
         user: process.env.OTP_EMAIL,
-        pass: process.env.OTP_PASSWORD, 
+        pass: process.env.OTP_PASSWORD,
       },
     });
 
-    const mailOptions = 
+    const mailOptions =
     {
       from: '"OnlineTestApp" <...04@gmail.com>',
       to: email,
@@ -80,7 +80,7 @@ export class AuthService {
     req.session.otpExpires = Date.now() + 5 * 60 * 1000;
   }
 
-  async updatePassword(req: Request,email: string, otp: string, newPassword: string): Promise<{ message: string }> {
+  async updatePassword(req: Request, email: string, otp: string, newPassword: string): Promise<{ message: string }> {
     try {
       if (!req.session.email || !req.session.otp) {
         throw new UnauthorizedException('Session expired or OTP not requested');
@@ -104,7 +104,7 @@ export class AuthService {
       const hash = await bcrypt.hash(newPassword, 10);
       await this.authRepository.updatePassword(user.user_id, hash);
 
-      req.session.destroy(() => {});
+      req.session.destroy(() => { });
 
       return { message: 'Password updated successfully' };
     } catch (error) {

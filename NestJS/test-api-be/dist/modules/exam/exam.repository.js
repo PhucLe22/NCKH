@@ -26,8 +26,25 @@ let ExamRepository = class ExamRepository extends typeorm_1.Repository {
             relations: ['questions'],
         });
     }
-    async findById(id) {
-        return this.findById(id);
+    async findExamById(exam_id) {
+        return this.findOne({
+            where: { exam_id },
+            relations: ['teacher'],
+        });
+    }
+    async updateExam(exam_id, UpdateExamDto) {
+        return this.update({ exam_id }, UpdateExamDto);
+    }
+    async deleteExam(exam_id) {
+        return this.delete({ exam_id });
+    }
+    async findTeacherIdByUserId(user_id) {
+        const result = await this.createQueryBuilder('exam')
+            .leftJoinAndSelect('exam.teacher', 'teacher')
+            .where('teacher.user_id = :user_id', { user_id })
+            .select('teacher.teacher_id')
+            .getRawOne();
+        return result ? result.teacher_id : null;
     }
 };
 exports.ExamRepository = ExamRepository;

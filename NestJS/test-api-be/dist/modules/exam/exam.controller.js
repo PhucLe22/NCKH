@@ -16,6 +16,7 @@ exports.ExamController = void 0;
 const common_1 = require("@nestjs/common");
 const exam_service_1 = require("./exam.service");
 const exam_create_dto_1 = require("./dto/exam.create.dto");
+const exam_update_dto_1 = require("./dto/exam.update.dto");
 const common_2 = require("@nestjs/common");
 const jwt_auth_guard_1 = require("../auth/jwt.auth.guard");
 const common_3 = require("@nestjs/common");
@@ -25,6 +26,12 @@ let ExamController = class ExamController {
     }
     async createExam(createExamDto, req) {
         return await this.examService.createExam(createExamDto, req);
+    }
+    async updateExam(id, updateExamDto, req) {
+        return await this.examService.updateExamById(id, updateExamDto, req);
+    }
+    async deleteExam(id, req) {
+        return await this.examService.deleteExamById(id, req);
     }
 };
 exports.ExamController = ExamController;
@@ -37,6 +44,25 @@ __decorate([
     __metadata("design:paramtypes", [exam_create_dto_1.CreateExamDto, Object]),
     __metadata("design:returntype", Promise)
 ], ExamController.prototype, "createExam", null);
+__decorate([
+    (0, common_2.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.Patch)('/update/:id'),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Body)()),
+    __param(2, (0, common_3.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number, exam_update_dto_1.UpdateExamDto, Object]),
+    __metadata("design:returntype", Promise)
+], ExamController.prototype, "updateExam", null);
+__decorate([
+    (0, common_2.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    (0, common_1.Delete)('/delete/:id'),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_3.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number, Object]),
+    __metadata("design:returntype", Promise)
+], ExamController.prototype, "deleteExam", null);
 exports.ExamController = ExamController = __decorate([
     (0, common_1.Controller)('exam'),
     __metadata("design:paramtypes", [exam_service_1.ExamService])

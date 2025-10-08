@@ -61,6 +61,14 @@ __decorate([
     __metadata("design:type", Array)
 ], Exam.prototype, "notifications", void 0);
 __decorate([
+    (0, typeorm_1.Column)({ name: 'code', default: null }),
+    __metadata("design:type", Number)
+], Exam.prototype, "code", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ name: 'status', default: 'public' }),
+    __metadata("design:type", String)
+], Exam.prototype, "status", void 0);
+__decorate([
     (0, typeorm_1.CreateDateColumn)({ name: 'created_at' }),
     __metadata("design:type", Date)
 ], Exam.prototype, "createdAt", void 0);

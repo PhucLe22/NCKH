@@ -37,7 +37,7 @@ let AuthService = class AuthService {
         const payload = { sub: user.user_id, email: user.email, role: user.role };
         const token = this.jwtService.sign(payload, {
             secret: process.env.JWT_SECRET,
-            expiresIn: '2m',
+            expiresIn: '10m',
         });
         return {
             access_token: token,

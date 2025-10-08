@@ -21,7 +21,4 @@ export class CreateExamDto {
     @IsNotEmpty()
     @ApiProperty()
     duration: number;
-
-    @IsNotEmpty()
-    teacher_id: number;
 }

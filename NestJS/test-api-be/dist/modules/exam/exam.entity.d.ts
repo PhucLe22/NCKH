@@ -13,6 +13,8 @@ export declare class Exam {
     students: Student[];
     questions: Question[];
     notifications: Notification[];
+    code: number;
+    status: string;
     createdAt: Date;
     updatedAt: Date;
 }
