@@ -9,11 +9,13 @@ import {
   ManyToMany,
   JoinTable,
   OneToMany,
+  BeforeInsert,
 } from 'typeorm';
 import { Teacher } from '../teacher/teacher.entity';
 import { Student } from '../student/student.entity';
 import { Question } from '../question/question.entity';
 import { Notification } from '../notification/notification.entity';
+import * as bcrypt from 'bcrypt';
 
 @Entity('exams')
 export class Exam {
@@ -50,7 +52,7 @@ export class Exam {
   notifications: Notification[];
 
   @Column({ name: 'code', default: null })
-  code: number;
+  code: string;
 
   @Column({ name: 'status', default: 'public' })
   status: string;

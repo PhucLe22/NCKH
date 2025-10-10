@@ -16,6 +16,7 @@ const exam_entity_1 = require("./exam.entity");
 const teacher_repository_1 = require("../teacher/teacher.repository");
 const jwt_1 = require("@nestjs/jwt");
 const auth_module_1 = require("../auth/auth.module");
+const student_repository_1 = require("../student/student.repository");
 let ExamModule = class ExamModule {
 };
 exports.ExamModule = ExamModule;
@@ -27,6 +28,7 @@ exports.ExamModule = ExamModule = __decorate([
             teacher_repository_1.TeacherRepository,
             jwt_1.JwtService,
             auth_module_1.AuthModule,
+            student_repository_1.StudentRepository,
         ],
         controllers: [exam_controller_1.ExamController],
         imports: [typeorm_1.TypeOrmModule.forFeature([exam_entity_1.Exam])],

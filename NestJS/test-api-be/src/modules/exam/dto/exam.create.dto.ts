@@ -21,4 +21,11 @@ export class CreateExamDto {
     @IsNotEmpty()
     @ApiProperty()
     duration: number;
+
+    @IsNotEmpty()
+    @ApiProperty()
+    code: string;
+
+    @ApiProperty()
+    status: string;
 }

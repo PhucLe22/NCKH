@@ -16,6 +16,7 @@ const exam_entity_1 = require("./exam.entity");
 const jwt_1 = require("@nestjs/jwt");
 const common_2 = require("@nestjs/common");
 const teacher_repository_1 = require("../teacher/teacher.repository");
+const bcrypt = require("bcrypt");
 let ExamService = class ExamService {
     constructor(examRepository, jwtService, teacherRepository) {
         this.examRepository = examRepository;
@@ -29,6 +30,7 @@ let ExamService = class ExamService {
         exam.start_time = createExamDto.start_time;
         exam.end_time = createExamDto.end_time;
         exam.duration = createExamDto.duration;
+        exam.code = createExamDto.code;
         const token = req.cookies?.token;
         const decoded = this.jwtService.decode(token);
         const teacher = await this.teacherRepository.getTeacherByUserId(decoded.sub);
@@ -38,6 +40,26 @@ let ExamService = class ExamService {
         exam.teacher = teacher;
         const createdExam = await this.examRepository.createExam(exam);
         return createdExam;
+    }
+    async findAll() {
+        const exams = await this.examRepository.findAll();
+        const resList = [];
+        for (const exam of exams) {
+            if (exam.status != 'private') {
+                resList.push({
+                    exam_id: exam.exam_id,
+                    title: exam.title,
+                    description: exam.description,
+                    start_time: exam.start_time,
+                    end_time: exam.end_time,
+                    duration: exam.duration,
+                    status: exam.status,
+                    createdAt: exam.createdAt,
+                    updatedAt: exam.updatedAt,
+                });
+            }
+        }
+        return resList;
     }
     async updateExamById(exam_id, UpdateExamDto, req) {
         const token = req.cookies?.token;
@@ -72,6 +94,37 @@ let ExamService = class ExamService {
         }
         await this.examRepository.deleteExam(exam_id);
         return { message: 'Delete exam successfully!' };
+    }
+    async verifyExamCode(exam_id, VerifyExamCodeDto) {
+        const exam = await this.examRepository.findExamById(exam_id);
+        if (!exam) {
+            throw new common_2.NotFoundException(`Exam not found with ID: ${exam_id}!`);
+        }
+        const isValid = await bcrypt.compare(VerifyExamCodeDto.code, exam.code);
+        if (!isValid) {
+            throw new common_1.UnauthorizedException('Invalid exam code!');
+        }
+        return { message: 'Exam code is valid!' };
+    }
+    async findExamsByTeacher(req) {
+        const token = req.cookies?.token;
+        if (!token)
+            throw new common_1.UnauthorizedException('Missing authentication token!');
+        const decoded = this.jwtService.verify(token, {
+            secret: process.env.JWT_SECRET,
+        });
+        const teacher = await this.teacherRepository.getTeacherByUserId(decoded.sub);
+        if (!teacher) {
+            throw new common_2.NotFoundException('Teacher not found for this user!');
+        }
+        const exams = await this.examRepository.find({
+            where: { teacher: { teacher_id: teacher.teacher_id } },
+            relations: ['teacher', 'questions'],
+        });
+        if (!exams.length) {
+            throw new common_2.NotFoundException('No exams found for this teacher!');
+        }
+        return exams;
     }
 };
 exports.ExamService = ExamService;

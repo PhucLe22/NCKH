@@ -1,4 +1,4 @@
-import { Controller, Post, Patch, Delete, Body, Param } from '@nestjs/common';
+import { Controller, Post, Patch, Delete, Body, Param, Get } from '@nestjs/common';
 import { ExamService } from './exam.service';
 import { CreateExamDto } from './dto/exam.create.dto';
 import { UpdateExamDto } from './dto/exam.update.dto';
@@ -6,6 +6,7 @@ import { Request } from 'express';
 import { UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/jwt.auth.guard';
 import { Req } from '@nestjs/common';
+import { VerifyExamCodeDto } from './dto/exam.verify.dto';
 
 @Controller('exam')
 export class ExamController {
@@ -15,6 +16,12 @@ export class ExamController {
   @Post('/create')
   async createExam(@Body() createExamDto: CreateExamDto, @Req() req: Request) {
     return await this.examService.createExam(createExamDto, req);
+  }
+
+  @Get('')
+  async findExams(
+    @Req() req: Request) {
+    return await this.examService.findAll();
   }
 
   @UseGuards(JwtAuthGuard)
@@ -32,5 +39,20 @@ export class ExamController {
     @Param('id') id: number,
     @Req() req: Request) {
     return await this.examService.deleteExamById(id, req);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('/:id/verify-code')
+  async verifyExamCode(
+    @Param('id') id: number,
+    @Body() verifyExamCodeDto: VerifyExamCodeDto) {
+    return await this.examService.verifyExamCode(id, verifyExamCodeDto);
+  } 
+
+  @UseGuards(JwtAuthGuard)
+  @Get('/teacher/me')
+  async findExamsByTeacher(
+    @Req() req: Request) {
+    return await this.examService.findExamsByTeacher(req);
   }
 }

@@ -62,7 +62,7 @@ __decorate([
 ], Exam.prototype, "notifications", void 0);
 __decorate([
     (0, typeorm_1.Column)({ name: 'code', default: null }),
-    __metadata("design:type", Number)
+    __metadata("design:type", String)
 ], Exam.prototype, "code", void 0);
 __decorate([
     (0, typeorm_1.Column)({ name: 'status', default: 'public' }),

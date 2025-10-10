@@ -7,6 +7,8 @@ import { Exam } from './exam.entity';
 import { TeacherRepository } from '../teacher/teacher.repository';
 import { JwtService } from '@nestjs/jwt';
 import { AuthModule } from '../auth/auth.module';
+import { StudentRepository } from '../student/student.repository';
+
 
 @Module({
   providers: [
@@ -15,6 +17,7 @@ import { AuthModule } from '../auth/auth.module';
     TeacherRepository,
     JwtService,
     AuthModule,
+    StudentRepository,
   ],
   controllers: [ExamController],
   imports: [TypeOrmModule.forFeature([Exam])],
