@@ -24,6 +24,7 @@ const answer_module_1 = require("./modules/answer/answer.module");
 const notification_module_1 = require("./modules/notification/notification.module");
 const auth_module_1 = require("./modules/auth/auth.module");
 const ai_agent_module_1 = require("./modules/ai_agent/ai_agent.module");
+const admin_module_1 = require("./modules/admin/admin.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -59,6 +60,7 @@ exports.AppModule = AppModule = __decorate([
             notification_module_1.NotificationModule,
             auth_module_1.AuthModule,
             ai_agent_module_1.AiAgentModule,
+            admin_module_1.AdminModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],

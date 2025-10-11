@@ -42,14 +42,14 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], QuestionController.prototype, "createQuestion", null);
 __decorate([
-    (0, common_1.Get)(':examId'),
+    (0, common_1.Get)('/exam/:examId'),
     __param(0, (0, common_1.Param)('examId')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], QuestionController.prototype, "getQuestionsByExamId", null);
 __decorate([
-    (0, common_1.Delete)('/delete/:examId'),
+    (0, common_1.Delete)('/exam/delete/:examId'),
     __param(0, (0, common_1.Param)('examId')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),

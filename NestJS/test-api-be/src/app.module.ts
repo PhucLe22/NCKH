@@ -15,6 +15,7 @@ import { AnswerModule } from './modules/answer/answer.module';
 import { NotificationModule } from './modules/notification/notification.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { AiAgentModule } from './modules/ai_agent/ai_agent.module';
+import { AdminModule } from './modules/admin/admin.module';
 
 @Module({
   imports: [
@@ -47,6 +48,7 @@ import { AiAgentModule } from './modules/ai_agent/ai_agent.module';
     NotificationModule,
     AuthModule,
     AiAgentModule,
+    AdminModule,
     ],
   controllers: [AppController],
   providers: [AppService],

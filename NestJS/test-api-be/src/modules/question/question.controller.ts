@@ -14,12 +14,12 @@ export class QuestionController {
     return this.questionService.saveQuestions(parseInt(examId), createQuestionDtos);
   }
 
-  @Get(':examId')
+  @Get('/exam/:examId')
   async getQuestionsByExamId(@Param('examId') examId: string) {
     return this.questionService.findQuestionByExamId(parseInt(examId));
   }
 
-  @Delete('/delete/:examId')
+  @Delete('/exam/delete/:examId')
   async deleteQuestionByExamId(@Param('examId') examId: string) {
     return this.questionService.deleteQuestionByExamId(parseInt(examId));
   }
