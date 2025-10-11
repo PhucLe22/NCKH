@@ -8,22 +8,30 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TeacherModule = void 0;
 const common_1 = require("@nestjs/common");
+const typeorm_1 = require("@nestjs/typeorm");
 const teacher_service_1 = require("./teacher.service");
 const teacher_controller_1 = require("./teacher.controller");
 const teacher_repository_1 = require("./teacher.repository");
-const typeorm_1 = require("@nestjs/typeorm");
 const teacher_entity_1 = require("./teacher.entity");
+const teacherRequest_entity_1 = require("./teacherRequest.entity");
+const teacherRequest_repository_1 = require("./teacherRequest.repository");
+const user_entity_1 = require("../user/user.entity");
+const user_module_1 = require("../user/user.module");
 let TeacherModule = class TeacherModule {
 };
 exports.TeacherModule = TeacherModule;
 exports.TeacherModule = TeacherModule = __decorate([
     (0, common_1.Module)({
+        imports: [
+            typeorm_1.TypeOrmModule.forFeature([teacher_entity_1.Teacher, teacherRequest_entity_1.TeacherRequest, user_entity_1.User]),
+            user_module_1.UserModule,
+        ],
         providers: [
             teacher_service_1.TeacherService,
-            teacher_repository_1.TeacherRepository
+            teacher_repository_1.TeacherRepository,
+            teacherRequest_repository_1.TeacherRequestRepository,
         ],
         controllers: [teacher_controller_1.TeacherController],
-        imports: [typeorm_1.TypeOrmModule.forFeature([teacher_entity_1.Teacher])]
     })
 ], TeacherModule);
 //# sourceMappingURL=teacher.module.js.map

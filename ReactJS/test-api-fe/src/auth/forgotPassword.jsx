@@ -47,7 +47,7 @@ function ForgotPassword() {
         setMessageType("error");
       }
     } catch (err) {
-      setMessage("⚠️ Server connection failed while resending OTP!");
+      setMessage("Server connection failed while resending OTP!");
       setMessageType("error");
     }
     setIsResending(false);
@@ -67,7 +67,7 @@ function ForgotPassword() {
   const handleResetPassword = async (e) => {
     e.preventDefault();
     if (newPassword !== confirmPassword) {
-      setMessage("❗ Password confirmation does not match!");
+      setMessage("Password confirmation does not match!");
       setMessageType("error");
       return;
     }
