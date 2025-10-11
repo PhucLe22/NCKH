@@ -22,6 +22,15 @@ let OptionRepository = class OptionRepository extends typeorm_1.Repository {
         const option = this.create(optionData);
         return this.save(option);
     }
+    async findOptionByQuestionId(question_id) {
+        return this.find({ where: { question: { question_id: question_id } } });
+    }
+    async updateOptionByQuestionId(question_id, optionData) {
+        return this.update({ question: { question_id: question_id } }, optionData);
+    }
+    async deleteOptionByQuestionId(question_id) {
+        return this.delete({ question: { question_id: question_id } });
+    }
 };
 exports.OptionRepository = OptionRepository;
 exports.OptionRepository = OptionRepository = __decorate([

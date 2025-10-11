@@ -22,18 +22,47 @@ let QuestionController = class QuestionController {
     async createQuestion(examId, createQuestionDtos) {
         return this.questionService.saveQuestions(parseInt(examId), createQuestionDtos);
     }
+    async getQuestionsByExamId(examId) {
+        return this.questionService.findQuestionByExamId(parseInt(examId));
+    }
+    async deleteQuestionByExamId(examId) {
+        return this.questionService.deleteQuestionByExamId(parseInt(examId));
+    }
+    async findAllQuestions() {
+        return this.questionService.findAllQuestions();
+    }
 };
 exports.QuestionController = QuestionController;
 __decorate([
-    (0, common_1.Post)(':examId'),
+    (0, common_1.Post)('/exam/update/:examId'),
     __param(0, (0, common_1.Param)('examId')),
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, Array]),
     __metadata("design:returntype", Promise)
 ], QuestionController.prototype, "createQuestion", null);
+__decorate([
+    (0, common_1.Get)(':examId'),
+    __param(0, (0, common_1.Param)('examId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], QuestionController.prototype, "getQuestionsByExamId", null);
+__decorate([
+    (0, common_1.Delete)('/delete/:examId'),
+    __param(0, (0, common_1.Param)('examId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], QuestionController.prototype, "deleteQuestionByExamId", null);
+__decorate([
+    (0, common_1.Get)(),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], QuestionController.prototype, "findAllQuestions", null);
 exports.QuestionController = QuestionController = __decorate([
-    (0, common_1.Controller)('questions'),
+    (0, common_1.Controller)('question'),
     __metadata("design:paramtypes", [question_service_1.QuestionService])
 ], QuestionController);
 //# sourceMappingURL=question.controller.js.map

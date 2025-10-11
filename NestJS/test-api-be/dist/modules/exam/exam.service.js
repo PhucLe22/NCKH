@@ -13,6 +13,7 @@ exports.ExamService = void 0;
 const common_1 = require("@nestjs/common");
 const exam_repository_1 = require("./exam.repository");
 const exam_entity_1 = require("./exam.entity");
+const question_entity_1 = require("../question/question.entity");
 const jwt_1 = require("@nestjs/jwt");
 const common_2 = require("@nestjs/common");
 const teacher_repository_1 = require("../teacher/teacher.repository");
@@ -150,52 +151,73 @@ let ExamService = class ExamService {
         return exams;
     }
     async createExamFromAIFile(exam_id, file, req) {
-        const exam = await this.examRepository.findOne({ where: { exam_id: exam_id } });
+        const exam = await this.examRepository.findOne({
+            where: { exam_id: exam_id },
+            relations: ['teacher']
+        });
         if (!exam)
             throw new Error('Exam not found');
+        if (!exam.teacher)
+            throw new Error('Exam must be associated with a teacher');
         const aiData = await this.aiService.generateQuestionsFromFile(file);
+        if (!aiData || !aiData.questions || aiData.questions.length === 0) {
+            throw new Error('Failed to generate questions from AI service');
+        }
         exam.key_points = aiData.key_points || null;
         await this.examRepository.save(exam);
         const questionList = aiData.questions || [];
+        const typeMap = {
+            mcq: question_entity_1.QuestionType.MULTIPLE_CHOICE,
+            essay: question_entity_1.QuestionType.ESSAY,
+            true_false: question_entity_1.QuestionType.TRUE_FALSE,
+        };
         for (const q of questionList) {
-            const questionEntity = await this.questionRepository.createQuestion({
-                exam: exam,
-                content: q.question || '',
-                type: q.type || 'multiple_choice',
-                score: q.score || 1,
+            console.log('Creating question with data:', {
+                content: q.content,
+                type: q.type,
+                score: q.estimateScore
             });
-            if (q.options && q.options.length > 0) {
+            const question = new question_entity_1.Question();
+            question.exam = exam;
+            question.content = q.content || 'No content provided';
+            question.type = typeMap[q.type] || question_entity_1.QuestionType.ESSAY;
+            question.score = q.estimateScore || 1;
+            question.options = [];
+            question.answers = [];
+            console.log('Saving question to database...');
+            const questionEntity = await this.questionRepository.save(question);
+            console.log('Question saved with ID:', questionEntity.question_id);
+            if (q.options && q.options.length > 0 && typeMap[q.type] === question_entity_1.QuestionType.MULTIPLE_CHOICE) {
                 const optionsEntities = await Promise.all(q.options.map(async (opt) => {
                     const optionEntity = await this.optionRepository.createOption({
                         question: questionEntity,
-                        content: opt.content || opt.text || '',
-                        is_correct: opt.is_correct || opt.content === q.answer
+                        content: opt.content || 'No content provided',
+                        is_correct: opt.is_correct || opt.content === q.sampleAnswer
                     });
-                    if (optionEntity.is_correct) {
-                        await this.answerRepository.createAnswer({
-                            question: questionEntity,
-                            option: optionEntity,
-                            studentId: null,
-                            text: null,
-                        });
-                    }
                     return optionEntity;
                 }));
                 questionEntity.options = optionsEntities;
             }
-            if (!q.options && q.answer) {
-                await this.answerRepository.createAnswer({
-                    question: questionEntity,
-                    option: null,
-                    studentId: null,
-                    text: q.answer,
-                });
+            if (!q.options && q.sampleAnswer) {
+                console.log(`Sample answer for question: ${q.sampleAnswer}`);
             }
         }
+        const savedQuestions = await this.questionRepository.find({
+            where: { exam: { exam_id: exam.exam_id } },
+            relations: ['options']
+        });
+        console.log(`Found ${savedQuestions.length} questions in database for exam ${exam.exam_id}`);
+        console.log('Saved questions:', savedQuestions.map(q => ({
+            id: q.question_id,
+            content: q.content,
+            type: q.type,
+            options: q.options?.length || 0
+        })));
         return {
             message: 'AI-generated questions added successfully!',
             exam_id: exam.exam_id,
-            total_questions: questionList.length,
+            questions: questionList,
+            savedQuestions: savedQuestions.length
         };
     }
 };

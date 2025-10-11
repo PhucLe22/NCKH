@@ -25,4 +25,14 @@ export class QuestionService {
 
         return await this.questionRepository.save(entities);
       }
+    async findQuestionByExamId(exam_id: number) {
+        return this.questionRepository.findQuestionByExamId(exam_id);
+    }
+    async deleteQuestionByExamId(exam_id: number) {
+        return this.questionRepository.deleteQuestionByExamId(exam_id);
+    }
+    async findAllQuestions()
+    {
+        return this.questionRepository.findAll();
+    }
 }

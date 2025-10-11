@@ -30,6 +30,15 @@ let QuestionService = class QuestionService {
         }));
         return await this.questionRepository.save(entities);
     }
+    async findQuestionByExamId(exam_id) {
+        return this.questionRepository.findQuestionByExamId(exam_id);
+    }
+    async deleteQuestionByExamId(exam_id) {
+        return this.questionRepository.deleteQuestionByExamId(exam_id);
+    }
+    async findAllQuestions() {
+        return this.questionRepository.findAll();
+    }
 };
 exports.QuestionService = QuestionService;
 exports.QuestionService = QuestionService = __decorate([

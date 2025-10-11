@@ -4,5 +4,8 @@ export declare class AIService {
     private readonly httpService;
     private readonly configService;
     constructor(httpService: HttpService, configService: ConfigService);
-    generateQuestionsFromFile(file: Express.Multer.File): Promise<any>;
+    generateQuestionsFromFile(file: Express.Multer.File): Promise<{
+        key_points: string;
+        questions: any;
+    }>;
 }

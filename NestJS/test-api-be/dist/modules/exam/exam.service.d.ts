@@ -34,6 +34,7 @@ export declare class ExamService {
     createExamFromAIFile(exam_id: number, file: Express.Multer.File, req: Request): Promise<{
         message: string;
         exam_id: number;
-        total_questions: any;
+        questions: any;
+        savedQuestions: number;
     }>;
 }

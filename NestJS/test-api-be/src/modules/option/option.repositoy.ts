@@ -11,4 +11,13 @@ export class OptionRepository extends Repository<Option> {
         const option = this.create(optionData);
         return this.save(option);
     }
+    async findOptionByQuestionId(question_id: number) {
+        return this.find({ where: { question: { question_id: question_id } } });
+    }
+    async updateOptionByQuestionId(question_id: number, optionData: Partial<Option>) {
+        return this.update({ question: { question_id: question_id } }, optionData);
+    }
+    async deleteOptionByQuestionId(question_id: number) {
+        return this.delete({ question: { question_id: question_id } });
+    }
 }

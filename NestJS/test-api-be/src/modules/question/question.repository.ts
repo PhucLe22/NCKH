@@ -19,4 +19,10 @@ export class QuestionRepository extends Repository<Question> {
     async updateById(id: number, question: Question) {
         return this.update(id, question);
     }
+    async findQuestionByExamId(exam_id: number) {
+        return this.find({ where: { exam: { exam_id: exam_id } } });
+    }
+    async deleteQuestionByExamId(exam_id: number) {
+        return this.delete({ exam: { exam_id: exam_id } });
+    }
 }

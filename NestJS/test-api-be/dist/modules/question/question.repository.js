@@ -30,6 +30,12 @@ let QuestionRepository = class QuestionRepository extends typeorm_1.Repository {
     async updateById(id, question) {
         return this.update(id, question);
     }
+    async findQuestionByExamId(exam_id) {
+        return this.find({ where: { exam: { exam_id: exam_id } } });
+    }
+    async deleteQuestionByExamId(exam_id) {
+        return this.delete({ exam: { exam_id: exam_id } });
+    }
 };
 exports.QuestionRepository = QuestionRepository;
 exports.QuestionRepository = QuestionRepository = __decorate([

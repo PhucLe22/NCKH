@@ -14,39 +14,64 @@ const common_1 = require("@nestjs/common");
 const axios_1 = require("@nestjs/axios");
 const config_1 = require("@nestjs/config");
 const FormData = require("form-data");
-const stream_1 = require("stream");
 let AIService = class AIService {
     constructor(httpService, configService) {
         this.httpService = httpService;
         this.configService = configService;
     }
     async generateQuestionsFromFile(file) {
-        if (!file)
-            throw new common_1.BadRequestException('File is required');
-        const stream = new stream_1.Readable();
-        stream.push(file.buffer);
-        stream.push(null);
-        const formData = new FormData();
-        formData.append('file', stream, { filename: file.originalname });
-        const baseUrl = this.configService.get('AI_AGENT_URL') || 'http://localhost:8000';
-        if (!baseUrl)
-            throw new Error('AI_AGENT_URL is not defined in .env');
-        const url = `${baseUrl.replace(/\/+$/, '')}/api/generate-questions-from-file`;
-        console.log('📡 Sending request to AI service:', url);
+        if (!file?.buffer) {
+            throw new common_1.BadRequestException('Invalid file provided');
+        }
         try {
-            const { data } = await this.httpService.axiosRef.post(url, formData, {
-                headers: formData.getHeaders(),
-                maxContentLength: Infinity,
-                maxBodyLength: Infinity,
+            const formData = new FormData();
+            formData.append('file', file.buffer, {
+                filename: file.originalname || 'uploaded_file',
+                contentType: file.mimetype,
+                knownLength: file.size
             });
-            return data;
+            const baseUrl = this.configService.get('AI_AGENT_URL', 'http://localhost:8000');
+            const url = `${baseUrl.replace(/\/+$/, '')}/api/generate-questions-from-file`;
+            console.log('📡 Sending request to AI service:', url);
+            const headers = formData.getHeaders();
+            const response = await new Promise((resolve, reject) => {
+                formData.submit({
+                    host: new URL(url).hostname,
+                    port: new URL(url).port || (url.startsWith('https') ? 443 : 80),
+                    path: new URL(url).pathname,
+                    method: 'POST',
+                    headers: headers,
+                    protocol: url.startsWith('https') ? 'https:' : 'http:'
+                }, (err, res) => {
+                    if (err)
+                        return reject(err);
+                    let data = '';
+                    res.on('data', chunk => data += chunk);
+                    res.on('end', () => {
+                        try {
+                            const responseData = JSON.parse(data);
+                            resolve({
+                                ...responseData
+                            });
+                        }
+                        catch (e) {
+                            reject(new Error(`Failed to parse response: ${e.message}`));
+                        }
+                    });
+                });
+            });
+            if (!response?.questions) {
+                console.error('Empty or invalid response from AI service:', response);
+                throw new Error('Empty response from AI service');
+            }
+            console.log('Received response from AI service');
+            return {
+                key_points: response.key_points,
+                questions: response.questions
+            };
         }
         catch (error) {
-            console.error('❌ Error calling AI service:', error.message);
-            if (error.response) {
-                console.error('Response:', error.response.data);
-            }
-            throw new Error(`AI service failed: ${error.message}`);
+            console.error('❌ Error calling AI service:', error);
         }
     }
 };

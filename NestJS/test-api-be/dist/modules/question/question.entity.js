@@ -28,7 +28,7 @@ __decorate([
     __metadata("design:type", Number)
 ], Question.prototype, "question_id", void 0);
 __decorate([
-    (0, typeorm_1.Column)(),
+    (0, typeorm_1.Column)('text'),
     __metadata("design:type", String)
 ], Question.prototype, "content", void 0);
 __decorate([
@@ -39,7 +39,7 @@ __decorate([
     __metadata("design:type", String)
 ], Question.prototype, "type", void 0);
 __decorate([
-    (0, typeorm_1.Column)(),
+    (0, typeorm_1.Column)({ nullable: true }),
     __metadata("design:type", Number)
 ], Question.prototype, "score", void 0);
 __decorate([

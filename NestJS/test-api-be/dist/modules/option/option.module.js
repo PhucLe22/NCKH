@@ -10,12 +10,13 @@ exports.OptionModule = void 0;
 const common_1 = require("@nestjs/common");
 const option_service_1 = require("./option.service");
 const option_controller_1 = require("./option.controller");
+const option_repositoy_1 = require("./option.repositoy");
 let OptionModule = class OptionModule {
 };
 exports.OptionModule = OptionModule;
 exports.OptionModule = OptionModule = __decorate([
     (0, common_1.Module)({
-        providers: [option_service_1.OptionService],
+        providers: [option_service_1.OptionService, option_repositoy_1.OptionRepository],
         controllers: [option_controller_1.OptionController]
     })
 ], OptionModule);

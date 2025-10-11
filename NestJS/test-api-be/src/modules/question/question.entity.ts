@@ -14,7 +14,7 @@ export class Question {
   @PrimaryGeneratedColumn()
   question_id: number;
 
-  @Column()
+  @Column('text')
   content: string;
 
   @Column({
@@ -23,7 +23,7 @@ export class Question {
   })
   type: QuestionType;
 
-  @Column()
+  @Column({ nullable: true })
   score: number;
 
   @ManyToOne(() => Exam, (exam) => exam.questions, { onDelete: 'CASCADE' })
