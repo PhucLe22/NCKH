@@ -14,14 +14,29 @@ export class AdminService {
         throw new Error('Invalid admin security code');
       }
       const hashPassword = await bcrypt.hash(CreateAdminDto.password, 10);
-      const hashUsername = await bcrypt.hash(CreateAdminDto.username, 10);
       const hashAdminCode = await bcrypt.hash(CreateAdminDto.adminCode, 10);
-      const hashEmail = await bcrypt.hash(CreateAdminDto.email, 10);
       CreateAdminDto.password = hashPassword;
-      CreateAdminDto.email = hashEmail;
       CreateAdminDto.adminCode = hashAdminCode;
-      CreateAdminDto.username = hashUsername;
       const admin = this.adminRepository.createAdmin(CreateAdminDto);
       return admin;
+    }
+    
+    async loginAdmin(email: string, password: string): Promise<string> {
+      const admin = await this.adminRepository.findOne({where: {email: email}});
+      if (!admin) {
+        throw new Error('Admin not found');
+      }
+      const isMatch = await bcrypt.compare(password, admin.password);
+      if (!isMatch) {
+        throw new Error('Invalid email or password');
+      }
+      return "Login successfully in administration";
+    }
+
+    async deleteAdmin(id: number, adminCode: string): Promise<void> {
+      if(adminCode !== this.configService.get('ADMIN_SECURITY')) {
+        throw new Error('Invalid admin security code');
+      }
+      await this.adminRepository.deleteAdmin(id, adminCode);
     }
 }

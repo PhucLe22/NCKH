@@ -19,13 +19,13 @@ function Login() {
         localStorage.setItem("token", data.token);
         localStorage.setItem("user", JSON.stringify(data.user)); // lưu user
   
-        setMessage(`Đăng nhập thành công! Xin chào ${data.user.username}`);
+        setMessage(`Login successful! Hello! ${data.user.username}`);
         setTimeout(() => navigate("/"), 1000);
       } else {
-        setMessage(`${data.message || "Sai email hoặc password"}`);
+        setMessage(`${data.message || "UnCorrect email or password"}`);
       }
     } catch (err) {
-      setMessage("⚠️ Không kết nối được server!");
+      setMessage(" not connect to server!");
     }
   };
 
@@ -61,6 +61,10 @@ function Login() {
         <p className="auth-link">
           Don’t have an account? <Link to="/auth/register">Register</Link>
         </p>
+        <p className="auth-link">
+          <Link to="/auth/forgotPassword">Forgot Password?</Link>
+        </p>
+
       </div>
     </div>
   );

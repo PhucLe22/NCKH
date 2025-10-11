@@ -1,76 +1,182 @@
 .auth-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-top: 80px;
-    font-family: Arial, sans-serif;
+  position: fixed; 
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  justify-content: center; 
+  align-items: center; 
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #5b73e8, #8a2be2);
+}
+
+.auth-card {
+  width: 350px;
+  padding: 30px;
+  border-radius: 12px;
+  background-color: #ffffff;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+  text-align: center;
+  animation: fadeInUp 0.5s ease-in-out;
+}
+
+.auth-card h2 {
+  margin-bottom: 20px;
+  color: #333333;
+}
+
+.auth-input {
+  width: 100%;
+  padding: 12px;
+  margin: 8px 0;
+  border-radius: 8px;
+  border: 1px solid #cccccc;
+  font-size: 14px;
+  outline: none;
+}
+
+.auth-input:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 4px rgba(0, 123, 255, 0.4);
+}
+
+.auth-button {
+  width: 100%;
+  padding: 12px;
+  background-color: #007bff;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 12px;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.auth-button:hover {
+  background-color: #0056b3;
+}
+
+.auth-link {
+  margin-top: 18px;
+  font-size: 14px;
+}
+
+.auth-link a {
+  color: #007bff;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.auth-link a:hover {
+  text-decoration: underline;
+}
+
+/* Hiệu ứng mượt khi form xuất hiện */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
   }
-  
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 480px) {
   .auth-card {
-    width: 350px;
-    padding: 30px;
-    border-radius: 12px;
-    background-color: #ffffff;
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
-    text-align: center;
+    width: 90%;
+    padding: 20px;
   }
-  
-  .auth-card h2 {
-    margin-bottom: 20px;
-    color: #333333;
-  }
-  
-  .auth-input {
-    width: 100%;
-    padding: 12px;
-    margin: 8px 0;
-    border-radius: 8px;
-    border: 1px solid #cccccc;
-    font-size: 14px;
-    outline: none;
-  }
-  
-  .auth-input:focus {
-    border-color: #007bff;
-    box-shadow: 0 0 4px rgba(0, 123, 255, 0.4);
-  }
-  
-  .auth-button {
-    width: 100%;
-    padding: 12px;
-    background-color: #007bff;
-    color: #ffffff;
-    border: none;
-    border-radius: 8px;
-    font-size: 15px;
-    font-weight: bold;
-    cursor: pointer;
-    margin-top: 12px;
-    transition: background-color 0.2s ease-in-out;
-  }
-  
-  .auth-button:hover {
-    background-color: #0056b3;
-  }
-  
-  .auth-message {
-    margin-top: 15px;
-    font-size: 14px;
-    color: #d9534f;
-  }
-  
-  .auth-link {
-    margin-top: 18px;
-    font-size: 14px;
-  }
-  
-  .auth-link a {
-    color: #007bff;
-    text-decoration: none;
-    font-weight: bold;
-  }
-  
-  .auth-link a:hover {
-    text-decoration: underline;
-  }
-  
+}
+
+/* Thời gian đếm ngược OTP */
+.auth-timer {
+  margin-top: 10px;
+  font-size: 15px;
+  color: #f39c12; /* vàng cam nổi bật */
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+/* Biểu tượng đồng hồ cát (emoji hoặc icon) */
+.auth-timer::before {
+  content: "⏳";
+}
+
+/* Thông báo chính (OTP sent / error / success) */
+.auth-message {
+  margin-top: 10px;
+  font-size: 14px;
+  font-weight: 500;
+  text-align: center;
+}
+
+/* Thông báo thành công */
+.auth-message.success {
+  color: #28a745; /* xanh lá */
+}
+
+/* Thông báo lỗi */
+.auth-message.error {
+  color: #dc3545; /* đỏ */
+}
+
+/* Thông báo cảnh báo */
+.auth-message.warning {
+  color: #f39c12; /* vàng */
+}
+
+.auth-message {
+  margin-top: 10px;
+  font-size: 15px;
+  font-weight: 500;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.msg-success {
+  color: #2ecc71; /* xanh lá */
+}
+
+.msg-error {
+  color: #e74c3c; /* đỏ */
+}
+
+.msg-warning {
+  color: #f39c12; /* cam vàng */
+}
+
+.auth-countdown {
+  text-align: center;
+  font-size: 14px;
+  margin-top: 10px;
+}
+
+.resend-button {
+  margin-top: 10px;
+  width: 100%;
+  background-color: #6c5ce7;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.resend-button:hover {
+  background-color: #4834d4;
+}
+
+.resend-button:disabled {
+  background-color: #b2bec3;
+  cursor: not-allowed;
+}
