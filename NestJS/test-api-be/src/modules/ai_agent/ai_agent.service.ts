@@ -1,45 +1,45 @@
-import { Inject, Injectable } from '@nestjs/common';
-import axios from 'axios';
-import { QuestionRepository } from '../question/question.repository';
-import { ExamRepository } from '../exam/exam.repository';
-import { Question } from '../question/question.entity';
-
-interface QuestionData {
-  content: string;
-  type?: string;
-  score?: number;
-  exam?: any; 
-  options?: any[];
-}
+import { Injectable, BadRequestException } from '@nestjs/common';
+import { HttpService } from '@nestjs/axios';
+import { ConfigService } from '@nestjs/config';
+import * as FormData from 'form-data';
+import { Readable } from 'stream';
 
 @Injectable()
-export class AiAgentService {
+export class AIService {
   constructor(
-    @Inject('AI_AGENT_URL') private readonly aiUrl: string,
-    private readonly questionRepository: QuestionRepository,
-    private readonly examRepository: ExamRepository,
-  ) {}    async generateQuestions(text: string, examId: number): Promise<Question[]> {
-        const response = await axios.post<QuestionData[]>(`${this.aiUrl}/generate-questions-from-text`, { text });
-        const questions = response.data;
+    private readonly httpService: HttpService,
+    private readonly configService: ConfigService,
+  ) {}
 
-        const selectedExam = await this.examRepository.findOne({ where: { exam_id: examId } });
-        
-        const savedQuestions: Question[] = [];
-        for (const question of questions) {
-            const savedQuestion = await this.questionRepository.createQuestion({
-                ...question,
-                type: question.type || 'multiple_choice', 
-                score: question.score || null, 
-                exam: selectedExam,
-                options: question.options || []
-            } as Question);
-            savedQuestions.push(savedQuestion);
-        }
-        return savedQuestions;
+  async generateQuestionsFromFile(file: Express.Multer.File) {
+    if (!file) throw new BadRequestException('File is required');
+
+    const stream = new Readable();
+    stream.push(file.buffer);
+    stream.push(null);
+
+    const formData = new FormData();
+    formData.append('file', stream, { filename: file.originalname });
+
+    const baseUrl = this.configService.get<string>('AI_AGENT_URL') || 'http://localhost:8000';
+    if (!baseUrl) throw new Error('AI_AGENT_URL is not defined in .env');
+
+    const url = `${baseUrl.replace(/\/+$/, '')}/api/generate-questions-from-file`;
+    console.log('📡 Sending request to AI service:', url);
+
+    try {
+      const { data } = await this.httpService.axiosRef.post(url, formData, {
+        headers: formData.getHeaders(),
+        maxContentLength: Infinity,
+        maxBodyLength: Infinity,
+      });
+      return data;
+    } catch (error) {
+      console.error('❌ Error calling AI service:', error.message);
+      if (error.response) {
+        console.error('Response:', error.response.data);
       }
-    
-      async reviewExam(examId: number) {
-        const res = await axios.post(`${this.aiUrl}/generate-questions-from-file`, { examId });
-        return res.data;
-      }
+      throw new Error(`AI service failed: ${error.message}`);
+    }
+  }
 }

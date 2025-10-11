@@ -20,7 +20,7 @@ __decorate([
     __metadata("design:type", Number)
 ], Option.prototype, "option_id", void 0);
 __decorate([
-    (0, typeorm_1.Column)(),
+    (0, typeorm_1.Column)({ nullable: true }),
     __metadata("design:type", String)
 ], Option.prototype, "content", void 0);
 __decorate([

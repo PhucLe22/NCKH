@@ -3,4 +3,5 @@ import { Option } from '../../modules/option/option.entity';
 export declare class OptionRepository extends Repository<Option> {
     private dataSource;
     constructor(dataSource: DataSource);
+    createOption(optionData: Partial<Option>): Promise<Option>;
 }

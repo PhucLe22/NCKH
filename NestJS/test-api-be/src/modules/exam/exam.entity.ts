@@ -48,6 +48,9 @@ export class Exam {
   @OneToMany(() => Question, (question) => question.exam)
   questions: Question[];
 
+  @Column({ type: 'text', nullable: true })
+  key_points: string;
+
   @OneToMany(() => Notification, (notification) => notification.exam)
   notifications: Notification[];
 

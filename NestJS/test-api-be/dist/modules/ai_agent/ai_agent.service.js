@@ -8,48 +8,52 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-var __param = (this && this.__param) || function (paramIndex, decorator) {
-    return function (target, key) { decorator(target, key, paramIndex); }
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.AiAgentService = void 0;
+exports.AIService = void 0;
 const common_1 = require("@nestjs/common");
-const axios_1 = require("axios");
-const question_repository_1 = require("../question/question.repository");
-const exam_repository_1 = require("../exam/exam.repository");
-let AiAgentService = class AiAgentService {
-    constructor(aiUrl, questionRepository, examRepository) {
-        this.aiUrl = aiUrl;
-        this.questionRepository = questionRepository;
-        this.examRepository = examRepository;
+const axios_1 = require("@nestjs/axios");
+const config_1 = require("@nestjs/config");
+const FormData = require("form-data");
+const stream_1 = require("stream");
+let AIService = class AIService {
+    constructor(httpService, configService) {
+        this.httpService = httpService;
+        this.configService = configService;
     }
-    async generateQuestions(text, examId) {
-        const response = await axios_1.default.post(`${this.aiUrl}/generate-questions-from-text`, { text });
-        const questions = response.data;
-        const selectedExam = await this.examRepository.findOne({ where: { exam_id: examId } });
-        const savedQuestions = [];
-        for (const question of questions) {
-            const savedQuestion = await this.questionRepository.createQuestion({
-                ...question,
-                type: question.type || 'multiple_choice',
-                score: question.score || null,
-                exam: selectedExam,
-                options: question.options || []
+    async generateQuestionsFromFile(file) {
+        if (!file)
+            throw new common_1.BadRequestException('File is required');
+        const stream = new stream_1.Readable();
+        stream.push(file.buffer);
+        stream.push(null);
+        const formData = new FormData();
+        formData.append('file', stream, { filename: file.originalname });
+        const baseUrl = this.configService.get('AI_AGENT_URL') || 'http://localhost:8000';
+        if (!baseUrl)
+            throw new Error('AI_AGENT_URL is not defined in .env');
+        const url = `${baseUrl.replace(/\/+$/, '')}/api/generate-questions-from-file`;
+        console.log('📡 Sending request to AI service:', url);
+        try {
+            const { data } = await this.httpService.axiosRef.post(url, formData, {
+                headers: formData.getHeaders(),
+                maxContentLength: Infinity,
+                maxBodyLength: Infinity,
             });
-            savedQuestions.push(savedQuestion);
+            return data;
         }
-        return savedQuestions;
-    }
-    async reviewExam(examId) {
-        const res = await axios_1.default.post(`${this.aiUrl}/generate-questions-from-file`, { examId });
-        return res.data;
+        catch (error) {
+            console.error('❌ Error calling AI service:', error.message);
+            if (error.response) {
+                console.error('Response:', error.response.data);
+            }
+            throw new Error(`AI service failed: ${error.message}`);
+        }
     }
 };
-exports.AiAgentService = AiAgentService;
-exports.AiAgentService = AiAgentService = __decorate([
+exports.AIService = AIService;
+exports.AIService = AIService = __decorate([
     (0, common_1.Injectable)(),
-    __param(0, (0, common_1.Inject)('AI_AGENT_URL')),
-    __metadata("design:paramtypes", [String, question_repository_1.QuestionRepository,
-        exam_repository_1.ExamRepository])
-], AiAgentService);
+    __metadata("design:paramtypes", [axios_1.HttpService,
+        config_1.ConfigService])
+], AIService);
 //# sourceMappingURL=ai_agent.service.js.map

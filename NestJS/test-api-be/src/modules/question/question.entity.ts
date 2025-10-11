@@ -3,6 +3,12 @@ import { Exam } from "../exam/exam.entity";
 import { Option } from "../option/option.entity";
 import { Answer } from "../answer/answer.entity";
 
+export enum QuestionType {
+  MULTIPLE_CHOICE = 'multiple_choice',
+  ESSAY = 'essay',
+  TRUE_FALSE = 'true_false',
+}
+
 @Entity('questions')
 export class Question {
   @PrimaryGeneratedColumn()
@@ -11,8 +17,11 @@ export class Question {
   @Column()
   content: string;
 
-  @Column()
-  type: string;
+  @Column({
+    type: 'enum',
+    enum: QuestionType,
+  })
+  type: QuestionType;
 
   @Column()
   score: number;

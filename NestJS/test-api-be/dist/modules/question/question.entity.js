@@ -9,11 +9,17 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Question = void 0;
+exports.Question = exports.QuestionType = void 0;
 const typeorm_1 = require("typeorm");
 const exam_entity_1 = require("../exam/exam.entity");
 const option_entity_1 = require("../option/option.entity");
 const answer_entity_1 = require("../answer/answer.entity");
+var QuestionType;
+(function (QuestionType) {
+    QuestionType["MULTIPLE_CHOICE"] = "multiple_choice";
+    QuestionType["ESSAY"] = "essay";
+    QuestionType["TRUE_FALSE"] = "true_false";
+})(QuestionType || (exports.QuestionType = QuestionType = {}));
 let Question = class Question {
 };
 exports.Question = Question;
@@ -26,7 +32,10 @@ __decorate([
     __metadata("design:type", String)
 ], Question.prototype, "content", void 0);
 __decorate([
-    (0, typeorm_1.Column)(),
+    (0, typeorm_1.Column)({
+        type: 'enum',
+        enum: QuestionType,
+    }),
     __metadata("design:type", String)
 ], Question.prototype, "type", void 0);
 __decorate([

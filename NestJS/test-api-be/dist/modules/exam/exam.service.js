@@ -17,11 +17,19 @@ const jwt_1 = require("@nestjs/jwt");
 const common_2 = require("@nestjs/common");
 const teacher_repository_1 = require("../teacher/teacher.repository");
 const bcrypt = require("bcrypt");
+const ai_agent_service_1 = require("../ai_agent/ai_agent.service");
+const question_repository_1 = require("../question/question.repository");
+const option_repositoy_1 = require("../option/option.repositoy");
+const answer_repository_1 = require("../answer/answer.repository");
 let ExamService = class ExamService {
-    constructor(examRepository, jwtService, teacherRepository) {
+    constructor(examRepository, questionRepository, jwtService, teacherRepository, aiService, optionRepository, answerRepository) {
         this.examRepository = examRepository;
+        this.questionRepository = questionRepository;
         this.jwtService = jwtService;
         this.teacherRepository = teacherRepository;
+        this.aiService = aiService;
+        this.optionRepository = optionRepository;
+        this.answerRepository = answerRepository;
     }
     async createExam(createExamDto, req) {
         const exam = new exam_entity_1.Exam();
@@ -45,11 +53,26 @@ let ExamService = class ExamService {
         const exams = await this.examRepository.findAll();
         const resList = [];
         for (const exam of exams) {
-            if (exam.status != 'private') {
+            if (exam.status === 'private') {
                 resList.push({
                     exam_id: exam.exam_id,
                     title: exam.title,
                     description: exam.description,
+                    code: exam.code,
+                    start_time: exam.start_time,
+                    end_time: exam.end_time,
+                    duration: exam.duration,
+                    status: exam.status,
+                    createdAt: exam.createdAt,
+                    updatedAt: exam.updatedAt,
+                });
+            }
+            else if (exam.status === 'public') {
+                resList.push({
+                    exam_id: exam.exam_id,
+                    title: exam.title,
+                    description: exam.description,
+                    code: exam.code,
                     start_time: exam.start_time,
                     end_time: exam.end_time,
                     duration: exam.duration,
@@ -126,12 +149,65 @@ let ExamService = class ExamService {
         }
         return exams;
     }
+    async createExamFromAIFile(exam_id, file, req) {
+        const exam = await this.examRepository.findOne({ where: { exam_id: exam_id } });
+        if (!exam)
+            throw new Error('Exam not found');
+        const aiData = await this.aiService.generateQuestionsFromFile(file);
+        exam.key_points = aiData.key_points || null;
+        await this.examRepository.save(exam);
+        const questionList = aiData.questions || [];
+        for (const q of questionList) {
+            const questionEntity = await this.questionRepository.createQuestion({
+                exam: exam,
+                content: q.question || '',
+                type: q.type || 'multiple_choice',
+                score: q.score || 1,
+            });
+            if (q.options && q.options.length > 0) {
+                const optionsEntities = await Promise.all(q.options.map(async (opt) => {
+                    const optionEntity = await this.optionRepository.createOption({
+                        question: questionEntity,
+                        content: opt.content || opt.text || '',
+                        is_correct: opt.is_correct || opt.content === q.answer
+                    });
+                    if (optionEntity.is_correct) {
+                        await this.answerRepository.createAnswer({
+                            question: questionEntity,
+                            option: optionEntity,
+                            studentId: null,
+                            text: null,
+                        });
+                    }
+                    return optionEntity;
+                }));
+                questionEntity.options = optionsEntities;
+            }
+            if (!q.options && q.answer) {
+                await this.answerRepository.createAnswer({
+                    question: questionEntity,
+                    option: null,
+                    studentId: null,
+                    text: q.answer,
+                });
+            }
+        }
+        return {
+            message: 'AI-generated questions added successfully!',
+            exam_id: exam.exam_id,
+            total_questions: questionList.length,
+        };
+    }
 };
 exports.ExamService = ExamService;
 exports.ExamService = ExamService = __decorate([
     (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [exam_repository_1.ExamRepository,
+        question_repository_1.QuestionRepository,
         jwt_1.JwtService,
-        teacher_repository_1.TeacherRepository])
+        teacher_repository_1.TeacherRepository,
+        ai_agent_service_1.AIService,
+        option_repositoy_1.OptionRepository,
+        answer_repository_1.AnswerRepository])
 ], ExamService);
 //# sourceMappingURL=exam.service.js.map

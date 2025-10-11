@@ -18,6 +18,9 @@ let AnswerRepository = class AnswerRepository extends typeorm_1.Repository {
         super(answer_entity_1.Answer, dataSource.createEntityManager());
         this.dataSource = dataSource;
     }
+    async createAnswer(answer) {
+        return this.save(answer);
+    }
 };
 exports.AnswerRepository = AnswerRepository;
 exports.AnswerRepository = AnswerRepository = __decorate([

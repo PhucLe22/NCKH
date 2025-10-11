@@ -12,6 +12,7 @@ export declare class Exam {
     teacher: Teacher;
     students: Student[];
     questions: Question[];
+    key_points: string;
     notifications: Notification[];
     code: string;
     status: string;

@@ -57,6 +57,10 @@ __decorate([
     __metadata("design:type", Array)
 ], Exam.prototype, "questions", void 0);
 __decorate([
+    (0, typeorm_1.Column)({ type: 'text', nullable: true }),
+    __metadata("design:type", String)
+], Exam.prototype, "key_points", void 0);
+__decorate([
     (0, typeorm_1.OneToMany)(() => notification_entity_1.Notification, (notification) => notification.exam),
     __metadata("design:type", Array)
 ], Exam.prototype, "notifications", void 0);

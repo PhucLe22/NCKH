@@ -12,18 +12,25 @@ const question_service_1 = require("./question.service");
 const question_controller_1 = require("./question.controller");
 const user_repository_1 = require("../user/user.repository");
 const typeorm_1 = require("@nestjs/typeorm");
-const question_entity_1 = require("../../modules/question/question.entity");
+const question_entity_1 = require("./question.entity");
+const question_repository_1 = require("./question.repository");
+const exam_module_1 = require("../exam/exam.module");
 let QuestionModule = class QuestionModule {
 };
 exports.QuestionModule = QuestionModule;
 exports.QuestionModule = QuestionModule = __decorate([
     (0, common_1.Module)({
+        imports: [
+            typeorm_1.TypeOrmModule.forFeature([question_entity_1.Question]),
+            exam_module_1.ExamModule,
+        ],
         providers: [
             question_service_1.QuestionService,
-            user_repository_1.UserRepository
+            user_repository_1.UserRepository,
+            question_repository_1.QuestionRepository,
         ],
         controllers: [question_controller_1.QuestionController],
-        imports: [typeorm_1.TypeOrmModule.forFeature([question_entity_1.Question])],
+        exports: [question_service_1.QuestionService],
     })
 ], QuestionModule);
 //# sourceMappingURL=question.module.js.map

@@ -7,4 +7,7 @@ export class AnswerRepository extends Repository<Answer> {
     constructor(private dataSource: DataSource) {
         super(Answer, dataSource.createEntityManager());
     }
+    async createAnswer(answer: Partial<Answer>) {
+        return this.save(answer);
+    }
 }

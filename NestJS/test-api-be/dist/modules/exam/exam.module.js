@@ -17,22 +17,48 @@ const teacher_repository_1 = require("../teacher/teacher.repository");
 const jwt_1 = require("@nestjs/jwt");
 const auth_module_1 = require("../auth/auth.module");
 const student_repository_1 = require("../student/student.repository");
+const question_entity_1 = require("../question/question.entity");
+const option_entity_1 = require("../option/option.entity");
+const answer_entity_1 = require("../answer/answer.entity");
+const question_repository_1 = require("../question/question.repository");
+const option_repositoy_1 = require("../option/option.repositoy");
+const answer_repository_1 = require("../answer/answer.repository");
+const teacher_entity_1 = require("../teacher/teacher.entity");
+const student_entity_1 = require("../student/student.entity");
+const ai_agent_service_1 = require("../ai_agent/ai_agent.service");
+const axios_1 = require("@nestjs/axios");
+const config_1 = require("@nestjs/config");
 let ExamModule = class ExamModule {
 };
 exports.ExamModule = ExamModule;
 exports.ExamModule = ExamModule = __decorate([
     (0, common_1.Module)({
+        imports: [
+            config_1.ConfigModule,
+            axios_1.HttpModule,
+            auth_module_1.AuthModule,
+            typeorm_1.TypeOrmModule.forFeature([
+                exam_entity_1.Exam,
+                question_entity_1.Question,
+                option_entity_1.Option,
+                answer_entity_1.Answer,
+                teacher_entity_1.Teacher,
+                student_entity_1.Student,
+            ]),
+        ],
+        controllers: [exam_controller_1.ExamController],
         providers: [
             exam_service_1.ExamService,
             exam_repository_1.ExamRepository,
+            question_repository_1.QuestionRepository,
+            option_repositoy_1.OptionRepository,
+            answer_repository_1.AnswerRepository,
             teacher_repository_1.TeacherRepository,
-            jwt_1.JwtService,
-            auth_module_1.AuthModule,
             student_repository_1.StudentRepository,
+            ai_agent_service_1.AIService,
+            jwt_1.JwtService,
         ],
-        controllers: [exam_controller_1.ExamController],
-        imports: [typeorm_1.TypeOrmModule.forFeature([exam_entity_1.Exam])],
-        exports: [exam_service_1.ExamService],
+        exports: [exam_service_1.ExamService, exam_repository_1.ExamRepository],
     })
 ], ExamModule);
 //# sourceMappingURL=exam.module.js.map

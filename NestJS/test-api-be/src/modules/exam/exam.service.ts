@@ -1,6 +1,7 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ExamRepository } from './exam.repository';
 import { Exam } from './exam.entity';
+import { Question } from '../question/question.entity';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
 import { CreateExamDto } from './dto/exam.create.dto';
@@ -9,13 +10,22 @@ import { ForbiddenException, NotFoundException } from '@nestjs/common';
 import { TeacherRepository } from '../teacher/teacher.repository';
 import { VerifyExamCodeDto } from './dto/exam.verify.dto';
 import * as bcrypt from 'bcrypt';
+import { AIService } from '../ai_agent/ai_agent.service';
+import { QuestionRepository } from '../question/question.repository';
+import { OptionRepository } from '../option/option.repositoy';
+import { AnswerRepository } from '../answer/answer.repository';
+import { ExamUploadDto } from './dto/exam.upload.dto';
 
 @Injectable()
 export class ExamService {
   constructor(
     private readonly examRepository: ExamRepository,
+    private readonly questionRepository: QuestionRepository,
     private readonly jwtService: JwtService,
     private readonly teacherRepository: TeacherRepository,
+    private readonly aiService: AIService,
+    private readonly optionRepository: OptionRepository,
+    private readonly answerRepository: AnswerRepository,
   ) { }
 
   async createExam(createExamDto: CreateExamDto, req: Request) {
@@ -39,18 +49,33 @@ export class ExamService {
 
     const createdExam = await this.examRepository.createExam(exam);
     return createdExam;
-  }
+  } 
 
   async findAll() {
     const exams = await this.examRepository.findAll();
     const resList = [];
     for(const exam of exams)
     {
-      if(exam.status != 'private'){
+      if(exam.status === 'private'){
         resList.push({
           exam_id: exam.exam_id,
           title: exam.title,
           description: exam.description,
+          code: exam.code,
+          start_time: exam.start_time,
+          end_time: exam.end_time,
+          duration: exam.duration,
+          status: exam.status,
+          createdAt: exam.createdAt,
+          updatedAt: exam.updatedAt,
+        })
+      }
+      else if (exam.status === 'public'){
+        resList.push({
+          exam_id: exam.exam_id,
+          title: exam.title,
+          description: exam.description,
+          code: exam.code,
           start_time: exam.start_time,
           end_time: exam.end_time,
           duration: exam.duration,
@@ -102,6 +127,7 @@ export class ExamService {
     await this.examRepository.deleteExam(exam_id);
     return { message: 'Delete exam successfully!' };
   }
+
   async verifyExamCode(exam_id: number, VerifyExamCodeDto: VerifyExamCodeDto) {
     const exam = await this.examRepository.findExamById(exam_id);
     if (!exam) {
@@ -115,6 +141,7 @@ export class ExamService {
 
     return { message: 'Exam code is valid!' };
   }
+
   async findExamsByTeacher(req: Request) {
     const token = req.cookies?.token;
     if (!token) throw new UnauthorizedException('Missing authentication token!');
@@ -137,5 +164,64 @@ export class ExamService {
       throw new NotFoundException('No exams found for this teacher!');
     }
     return exams
+  }
+
+  // AI Agent
+  async createExamFromAIFile(exam_id: number, file: Express.Multer.File, req: Request) {
+    const exam = await this.examRepository.findOne({ where: { exam_id: exam_id } });
+    if (!exam) throw new Error('Exam not found');
+  
+    const aiData = await this.aiService.generateQuestionsFromFile(file);
+  
+    exam.key_points = aiData.key_points || null;
+    await this.examRepository.save(exam);
+  
+    const questionList = aiData.questions || [];
+  
+    for (const q of questionList) {
+      const questionEntity = await this.questionRepository.createQuestion({
+        exam: exam,
+        content: q.question || '',
+        type: q.type || 'multiple_choice',
+        score: q.score || 1,
+      } as Question);
+  
+      if (q.options && q.options.length > 0) {
+        const optionsEntities = await Promise.all(
+          q.options.map(async (opt) => {
+            const optionEntity = await this.optionRepository.createOption({
+              question: questionEntity,
+              content: opt.content || opt.text || '',
+              is_correct: opt.is_correct || opt.content === q.answer
+            });
+            if (optionEntity.is_correct) {
+              await this.answerRepository.createAnswer({
+                question: questionEntity,
+                option: optionEntity,
+                studentId: null,
+                text: null,
+              });
+            }
+            return optionEntity;
+          })
+        );
+        questionEntity.options = optionsEntities;       
+       }
+  
+      if (!q.options && q.answer) {
+        await this.answerRepository.createAnswer({
+          question: questionEntity,
+          option: null,
+          studentId: null,
+          text: q.answer,
+        });
+      }
+    }
+  
+    return {
+      message: 'AI-generated questions added successfully!',
+      exam_id: exam.exam_id,
+      total_questions: questionList.length,
+    };
   }
 }

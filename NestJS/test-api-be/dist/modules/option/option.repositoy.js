@@ -18,6 +18,10 @@ let OptionRepository = class OptionRepository extends typeorm_1.Repository {
         super(option_entity_1.Option, dataSource.createEntityManager());
         this.dataSource = dataSource;
     }
+    async createOption(optionData) {
+        const option = this.create(optionData);
+        return this.save(option);
+    }
 };
 exports.OptionRepository = OptionRepository;
 exports.OptionRepository = OptionRepository = __decorate([

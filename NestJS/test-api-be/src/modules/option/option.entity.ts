@@ -6,7 +6,8 @@ export class Option {
     @PrimaryGeneratedColumn()
     option_id: number;
 
-    @Column()
+
+    @Column({ nullable: true })
     content: string;
 
     @Column()

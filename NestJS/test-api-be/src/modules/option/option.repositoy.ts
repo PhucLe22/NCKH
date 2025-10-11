@@ -7,4 +7,8 @@ export class OptionRepository extends Repository<Option> {
     constructor(private dataSource: DataSource) {
         super(Option, dataSource.createEntityManager());
     }
+    async createOption(optionData: Partial<Option>) {
+        const option = this.create(optionData);
+        return this.save(option);
+    }
 }

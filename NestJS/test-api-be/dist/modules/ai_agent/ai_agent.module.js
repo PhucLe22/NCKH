@@ -15,6 +15,8 @@ const exam_repository_1 = require("../exam/exam.repository");
 const question_entity_1 = require("../question/question.entity");
 const exam_entity_1 = require("../exam/exam.entity");
 const typeorm_1 = require("@nestjs/typeorm");
+const axios_1 = require("@nestjs/axios");
+const config_1 = require("@nestjs/config");
 let AiAgentModule = class AiAgentModule {
 };
 exports.AiAgentModule = AiAgentModule;
@@ -25,13 +27,13 @@ exports.AiAgentModule = AiAgentModule = __decorate([
                 provide: "AI_AGENT_URL",
                 useValue: "http://localhost:8000/api"
             },
-            ai_agent_service_1.AiAgentService,
+            ai_agent_service_1.AIService,
             question_repository_1.QuestionRepository,
             exam_repository_1.ExamRepository
         ],
         controllers: [ai_agent_controller_1.AiAgentController],
-        imports: [typeorm_1.TypeOrmModule.forFeature([question_entity_1.Question, exam_entity_1.Exam])],
-        exports: [ai_agent_service_1.AiAgentService]
+        imports: [typeorm_1.TypeOrmModule.forFeature([question_entity_1.Question, exam_entity_1.Exam]), axios_1.HttpModule, config_1.ConfigModule],
+        exports: [ai_agent_service_1.AIService]
     })
 ], AiAgentModule);
 //# sourceMappingURL=ai_agent.module.js.map

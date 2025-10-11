@@ -21,6 +21,7 @@ const common_2 = require("@nestjs/common");
 const jwt_auth_guard_1 = require("../auth/jwt.auth.guard");
 const common_3 = require("@nestjs/common");
 const exam_verify_dto_1 = require("./dto/exam.verify.dto");
+const platform_express_1 = require("@nestjs/platform-express");
 let ExamController = class ExamController {
     constructor(examService) {
         this.examService = examService;
@@ -42,6 +43,12 @@ let ExamController = class ExamController {
     }
     async findExamsByTeacher(req) {
         return await this.examService.findExamsByTeacher(req);
+    }
+    async createExamFromAIFile(examId, file, req) {
+        if (!file) {
+            throw new common_1.BadRequestException('No file uploaded');
+        }
+        return await this.examService.createExamFromAIFile(examId, file, req);
     }
 };
 exports.ExamController = ExamController;
@@ -97,6 +104,17 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], ExamController.prototype, "findExamsByTeacher", null);
+__decorate([
+    (0, common_1.Post)('/upload-file/:examId'),
+    (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('file')),
+    (0, common_2.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    __param(0, (0, common_1.Param)('examId')),
+    __param(1, (0, common_1.UploadedFile)()),
+    __param(2, (0, common_3.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number, Object, Object]),
+    __metadata("design:returntype", Promise)
+], ExamController.prototype, "createExamFromAIFile", null);
 exports.ExamController = ExamController = __decorate([
     (0, common_1.Controller)('exam'),
     __metadata("design:paramtypes", [exam_service_1.ExamService])
