@@ -60,12 +60,12 @@ let AuthService = class AuthService {
             from: '"Your App" <lenguyenthienphuc2004@gmail.com>',
             to: email,
             subject: 'Your OTP for password reset',
-            html: `<p>Your OTP is: <b>${otp}</b></p><p>Expires in 5 minutes.</p>`,
+            html: `<p>Your OTP is: <b>${otp}</b></p><p>Expires in 60 seconds.</p>`,
         };
         await transporter.sendMail(mailOptions);
         req.session.otp = otp;
         req.session.email = email;
-        req.session.otpExpires = Date.now() + 5 * 60 * 1000;
+        req.session.otpExpires = Date.now() + 60 * 1000;
     }
     async updatePassword(req, email, otp, newPassword) {
         if (!req.session.email || !req.session.otp) {

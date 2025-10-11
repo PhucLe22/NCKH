@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import Login from "./auth/Login";
 import Register from "./auth/Register";
 import Home from "./home/Home";
+import ForgotPassword from './auth/forgotPassword';
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="auth/login" element={<Login />} />
         <Route path="auth/register" element={<Register />} />
+        <Route path="auth/forgotPassword" element={<ForgotPassword />} />
       </Routes>
     </Router>
   );

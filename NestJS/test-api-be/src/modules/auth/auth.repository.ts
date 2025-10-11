@@ -17,7 +17,7 @@ async updatePassword(user_id: number, hash: string): Promise<void> {
 
   await this.createQueryBuilder()
     .update(User)
-    .set({ password: hash }) // ✅ Dùng hash, không phải newPassword
+    .set({ password: hash }) 
     .where('user_id = :user_id', { user_id })
     .execute();
 }
