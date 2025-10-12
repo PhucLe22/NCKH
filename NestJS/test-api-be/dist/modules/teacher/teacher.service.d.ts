@@ -7,6 +7,16 @@ export declare class TeacherService {
     constructor(teacherRepository: TeacherRepository, userRepository: UserRepository);
     createTeacher(body: CreateTeacherDto): Promise<{
         message: string;
-        teacher: import("./teacher.entity").Teacher;
+        teacher: {
+            teacher_id: number;
+            department: string;
+            status: import("./teacher.entity").TeacherStatus;
+            user: {
+                user_id: number;
+                username: string;
+                email: string;
+                role: string;
+            };
+        };
     }>;
 }

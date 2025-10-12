@@ -20,7 +20,6 @@ let TeacherService = class TeacherService {
         this.userRepository = userRepository;
     }
     async createTeacher(body) {
-        const role = 'teacher';
         const existingUser = await this.userRepository.findByEmail(body.email);
         if (existingUser) {
             throw new Error('User already exists');
@@ -37,14 +36,25 @@ let TeacherService = class TeacherService {
             department: body.department,
         });
         return {
-            message: 'Teacher registered successfully',
-            teacher: newTeacher,
+            message: 'Teacher registration successful. Waiting for admin approval.',
+            teacher: {
+                teacher_id: newTeacher.teacher_id,
+                department: newTeacher.department,
+                status: newTeacher.status,
+                user: {
+                    user_id: newUser.user_id,
+                    username: newUser.username,
+                    email: newUser.email,
+                    role: newUser.role,
+                },
+            },
         };
     }
 };
 exports.TeacherService = TeacherService;
 exports.TeacherService = TeacherService = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [teacher_repository_1.TeacherRepository, user_repository_1.UserRepository])
+    __metadata("design:paramtypes", [teacher_repository_1.TeacherRepository,
+        user_repository_1.UserRepository])
 ], TeacherService);
 //# sourceMappingURL=teacher.service.js.map

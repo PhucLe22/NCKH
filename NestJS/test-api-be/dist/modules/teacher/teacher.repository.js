@@ -40,6 +40,9 @@ let TeacherRepository = class TeacherRepository extends typeorm_1.Repository {
     async getTeacherById(id) {
         return this.findOne({ where: { teacher_id: id } });
     }
+    async getAllTeachers() {
+        return this.find({ relations: ['user'], order: { createdAt: 'DESC' } });
+    }
 };
 exports.TeacherRepository = TeacherRepository;
 exports.TeacherRepository = TeacherRepository = __decorate([

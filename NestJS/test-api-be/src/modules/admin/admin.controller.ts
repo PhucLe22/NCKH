@@ -1,8 +1,9 @@
-import { Controller, Post, Body, Delete, Param } from '@nestjs/common';
+import { Controller, Post, Body, Delete, Param, Get, Put } from '@nestjs/common';
 import { AdminService } from './admin.service';
 import { CreateAdminDto } from './dto/admin.create.dto';
 import { Admin } from './admin.entity';
 import { AdminLoginDto } from './dto/admin.login.dto';
+import { UpdateTeacherStatusDto } from '../teacher/dto/teacher.update.status.dto';
 
 @Controller('admin')
 export class AdminController {
@@ -21,5 +22,23 @@ export class AdminController {
   @Delete('delete/:id')
   async deleteAdmin(@Param('id') id: number, @Body() adminCode: string): Promise<void> {
     return this.adminService.deleteAdmin(id, adminCode);
+  }
+
+  @Get('users')
+  async getAllUser() {
+    return this.adminService.getAllUsers();
+  }
+
+  @Get('teachers')
+  async getAllTeachers() {
+    return this.adminService.getAllTeachers();
+  }
+
+   @Put('teachers/status/:id')
+  async updateTeacherStatus(
+    @Param('id') id: number,
+    @Body() updateStatusDto: UpdateTeacherStatusDto,
+  ) {
+    return this.adminService.updateTeacherStatus(id, updateStatusDto.status);
   }
 }

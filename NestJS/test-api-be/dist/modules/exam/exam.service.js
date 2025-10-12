@@ -172,11 +172,6 @@ let ExamService = class ExamService {
             true_false: question_entity_1.QuestionType.TRUE_FALSE,
         };
         for (const q of questionList) {
-            console.log('Creating question with data:', {
-                content: q.content,
-                type: q.type,
-                score: q.estimateScore
-            });
             const question = new question_entity_1.Question();
             question.exam = exam;
             question.content = q.content || 'No content provided';
@@ -184,9 +179,7 @@ let ExamService = class ExamService {
             question.score = q.estimateScore || 1;
             question.options = [];
             question.answers = [];
-            console.log('Saving question to database...');
             const questionEntity = await this.questionRepository.save(question);
-            console.log('Question saved with ID:', questionEntity.question_id);
             if (q.options && q.options.length > 0 && typeMap[q.type] === question_entity_1.QuestionType.MULTIPLE_CHOICE) {
                 const optionsEntities = await Promise.all(q.options.map(async (opt) => {
                     const optionEntity = await this.optionRepository.createOption({
@@ -197,9 +190,6 @@ let ExamService = class ExamService {
                     return optionEntity;
                 }));
                 questionEntity.options = optionsEntities;
-            }
-            if (!q.options && q.sampleAnswer) {
-                console.log(`Sample answer for question: ${q.sampleAnswer}`);
             }
         }
         const savedQuestions = await this.questionRepository.find({

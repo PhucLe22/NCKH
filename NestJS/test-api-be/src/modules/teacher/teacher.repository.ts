@@ -31,4 +31,8 @@ export class TeacherRepository extends Repository<Teacher> {
     async getTeacherById(id: number) {
         return this.findOne({ where: { teacher_id: id } });
     }
+
+    async getAllTeachers() {
+        return this.find({ relations: ['user'], order: { createdAt: 'DESC' } });
+    }
 }

@@ -9,10 +9,16 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Teacher = void 0;
+exports.Teacher = exports.TeacherStatus = void 0;
 const typeorm_1 = require("typeorm");
 const user_entity_1 = require("../user/user.entity");
 const exam_entity_1 = require("../exam/exam.entity");
+var TeacherStatus;
+(function (TeacherStatus) {
+    TeacherStatus["PENDING"] = "pending";
+    TeacherStatus["APPROVED"] = "approved";
+    TeacherStatus["REJECTED"] = "rejected";
+})(TeacherStatus || (exports.TeacherStatus = TeacherStatus = {}));
 let Teacher = class Teacher {
 };
 exports.Teacher = Teacher;
@@ -24,6 +30,14 @@ __decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
 ], Teacher.prototype, "department", void 0);
+__decorate([
+    (0, typeorm_1.Column)({
+        type: 'enum',
+        enum: TeacherStatus,
+        default: TeacherStatus.PENDING,
+    }),
+    __metadata("design:type", String)
+], Teacher.prototype, "status", void 0);
 __decorate([
     (0, typeorm_1.OneToOne)(() => user_entity_1.User),
     (0, typeorm_1.JoinColumn)({ name: 'user_id' }),

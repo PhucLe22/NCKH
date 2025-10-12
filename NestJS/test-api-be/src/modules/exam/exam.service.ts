@@ -192,12 +192,6 @@ export class ExamService {
     };
 
     for (const q of questionList) {
-      console.log('Creating question with data:', {
-        content: q.content,
-        type: q.type,
-        score: q.estimateScore
-      });
-      
       const question = new Question();
       question.exam = exam;
       question.content = q.content || 'No content provided';
@@ -206,9 +200,7 @@ export class ExamService {
       question.options = [];
       question.answers = [];
       
-      console.log('Saving question to database...');
       const questionEntity = await this.questionRepository.save(question);
-      console.log('Question saved with ID:', questionEntity.question_id);
   
       if (q.options && q.options.length > 0 && typeMap[q.type] === QuestionType.MULTIPLE_CHOICE) {
         const optionsEntities = await Promise.all(
@@ -218,41 +210,11 @@ export class ExamService {
               content: opt.content || 'No content provided',
               is_correct: opt.is_correct || opt.content === q.sampleAnswer
             });
-            // Don't create an answer record if there's no studentId
-            // as it's a required field in the Answer entity
-            // For sample/correct answers, we can either:
-            // 1. Store the correct option in the question itself, or
-            // 2. Create a separate table for sample answers
-            // For now, we'll skip creating answer records for sample questions
-            
-            // If you need to store correct answers, you could:
-            // 1. Add a 'correctOptionId' field to the Question entity, or
-            // 2. Create a separate 'SampleAnswer' entity
-            
-            // Example of how you might implement this in the future:
-            // question.correctOption = optionEntity;
             return optionEntity;
           })
         );
         questionEntity.options = optionsEntities;       
        }
-  
-      // For essay questions with sample answers, we'll store them in a different way
-      // since we can't create an answer record without a studentId
-      // You might want to store sample answers in a different table or as part of the question
-      if (!q.options && q.sampleAnswer) {
-        // Store the sample answer in the question's metadata or a separate table
-        // For now, we'll just log it
-        console.log(`Sample answer for question: ${q.sampleAnswer}`);
-        
-        // If you want to store sample answers, you could:
-        // 1. Add a 'sampleAnswer' field to the Question entity
-        // 2. Or create a separate 'SampleAnswer' entity
-        // 
-        // Example:
-        // question.sampleAnswer = q.sampleAnswer;
-        // await this.questionRepository.save(question);
-      }
     }
     
     // Verify questions were saved

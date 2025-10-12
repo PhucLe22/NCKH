@@ -9,4 +9,5 @@ export declare class TeacherRepository extends Repository<Teacher> {
     }): Promise<Teacher>;
     getTeacherByUserId(userId: number): Promise<Teacher>;
     getTeacherById(id: number): Promise<Teacher>;
+    getAllTeachers(): Promise<Teacher[]>;
 }
