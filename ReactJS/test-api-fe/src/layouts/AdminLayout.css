@@ -1,0 +1,179 @@
+/* Admin Layout Styles */
+.admin-layout {
+  min-height: 100vh;
+}
+
+.admin-sider {
+  background: #001529;
+  box-shadow: 2px 0 8px 0 rgba(29, 35, 41, 0.05);
+  position: fixed;
+  left: 0;
+  height: 100vh;
+  z-index: 10;
+  transition: all 0.2s;
+  overflow: auto;
+}
+
+.admin-logo {
+  height: 64px;
+  color: #fff;
+  font-size: 18px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.2);
+  margin-bottom: 8px;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.admin-menu {
+  border-right: none;
+  background: transparent;
+}
+
+.admin-menu .ant-menu-item {
+  margin: 4px 0;
+  border-radius: 0;
+  height: 48px;
+  line-height: 48px;
+  margin: 0;
+  width: 100%;
+}
+
+.admin-menu .ant-menu-item:not(:last-child) {
+  margin-bottom: 4px;
+}
+
+.admin-menu .ant-menu-item-selected {
+  background: #1890ff !important;
+  color: #fff !important;
+}
+
+.admin-menu .ant-menu-item:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.admin-header {
+  padding: 0 !important;
+  background: #fff !important;
+  box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
+  position: fixed;
+  width: 100%;
+  z-index: 9;
+  display: flex;
+  align-items: center;
+  transition: all 0.2s;
+  padding-left: 250px !important;
+}
+
+.admin-header.collapsed {
+  padding-left: 80px !important;
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 0 24px;
+}
+
+.trigger {
+  font-size: 18px;
+  line-height: 64px;
+  padding: 0 24px;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.trigger:hover {
+  color: #1890ff;
+}
+
+.admin-actions {
+  display: flex;
+  align-items: center;
+  padding-right: 24px;
+}
+
+.admin-profile {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 4px;
+  transition: all 0.3s;
+}
+
+.admin-profile:hover {
+  background: rgba(0, 0, 0, 0.025);
+}
+
+.admin-name {
+  margin-left: 12px;
+  font-weight: 500;
+}
+
+.admin-content {
+  margin-left: 250px;
+  margin-top: 64px;
+  padding: 24px;
+  min-height: calc(100vh - 64px);
+  transition: all 0.2s;
+  background: #f0f2f5;
+}
+
+.admin-content.collapsed {
+  margin-left: 80px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .admin-sider {
+    position: fixed;
+    z-index: 100;
+  }
+  
+  .admin-header {
+    padding-left: 0 !important;
+  }
+  
+  .admin-content {
+    margin-left: 0;
+    padding: 16px;
+    margin-top: 64px;
+  }
+  
+  .admin-sider {
+    left: -250px;
+  }
+  
+  .admin-sider.collapsed {
+    left: 0;
+  }
+  
+  .admin-content.collapsed {
+    margin-left: 0;
+  }
+}
+
+/* Scrollbar Styling */
+.admin-sider::-webkit-scrollbar {
+  width: 6px;
+}
+
+.admin-sider::-webkit-scrollbar-track {
+  background: #001529;
+}
+
+.admin-sider::-webkit-scrollbar-thumb {
+  background: #4a4a4a;
+  border-radius: 3px;
+}
+
+.admin-sider::-webkit-scrollbar-thumb:hover {
+  background: #6a6a6a;
+}

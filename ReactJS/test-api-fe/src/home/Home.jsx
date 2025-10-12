@@ -6,7 +6,7 @@ function Home() {
   return (
     <div className="home-container">
       <h1>🏠 Welcome to Home Page</h1>
-      <p>Đây là trang chính của ứng dụng.</p>
+      <p>This is application home page.</p>
 
       <div className="home-links">
         <Link to="/auth/login" className="home-link login">
