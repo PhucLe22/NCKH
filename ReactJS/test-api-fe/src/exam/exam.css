@@ -25,7 +25,7 @@
 
 .exam-list {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-template-columns: repeat(4, 1fr);
   gap: 1.5rem;
   margin-top: 2rem;
 }
@@ -37,6 +37,9 @@
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   border: 1px solid #eaeaea;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
 .exam-card:hover {
@@ -57,9 +60,16 @@
   line-height: 1.5;
 }
 
+.exam-card-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
 .exam-card button {
-  margin-top: 1rem;
-  padding: 0.6rem 1.2rem;
+  margin-top: auto;
+  padding: 0.8rem 1.2rem;
   background: linear-gradient(135deg, #667eea, #764ba2);
   color: white;
   border: none;
@@ -67,6 +77,8 @@
   cursor: pointer;
   font-weight: 600;
   transition: all 0.3s ease;
+  width: 100%;
+  text-align: center;
 }
 
 .exam-card button:hover {
@@ -190,7 +202,19 @@
 }
 
 /* Responsive Design */
-@media (max-width: 768px) {
+@media (max-width: 1200px) {
+  .exam-list {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 900px) {
+  .exam-list {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
   .exam-container {
     padding: 0 1rem;
   }
