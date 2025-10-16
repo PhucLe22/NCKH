@@ -13,6 +13,8 @@ const typeorm_1 = require("@nestjs/typeorm");
 const student_controller_1 = require("./student.controller");
 const student_repository_1 = require("./student.repository");
 const student_entity_1 = require("./student.entity");
+const user_module_1 = require("../user/user.module");
+const exam_module_1 = require("../exam/exam.module");
 let StudentModule = class StudentModule {
 };
 exports.StudentModule = StudentModule;
@@ -23,7 +25,8 @@ exports.StudentModule = StudentModule = __decorate([
             student_repository_1.StudentRepository,
         ],
         controllers: [student_controller_1.StudentController],
-        imports: [typeorm_1.TypeOrmModule.forFeature([student_entity_1.Student])],
+        imports: [typeorm_1.TypeOrmModule.forFeature([student_entity_1.Student]), user_module_1.UserModule, exam_module_1.ExamModule],
+        exports: [student_service_1.StudentService, student_repository_1.StudentRepository],
     })
 ], StudentModule);
 //# sourceMappingURL=student.module.js.map

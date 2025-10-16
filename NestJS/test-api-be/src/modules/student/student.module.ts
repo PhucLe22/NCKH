@@ -4,6 +4,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { StudentController } from './student.controller';
 import { StudentRepository } from './student.repository';
 import { Student } from './student.entity';
+import { UserModule } from '../user/user.module';
+import { ExamModule } from '../exam/exam.module';
 
 @Module({
   providers: [
@@ -11,6 +13,7 @@ import { Student } from './student.entity';
     StudentRepository,
   ],
   controllers: [StudentController],
-  imports: [TypeOrmModule.forFeature([Student])],
+  imports: [TypeOrmModule.forFeature([Student]),UserModule,ExamModule],
+  exports: [StudentService, StudentRepository],
 })
 export class StudentModule {}

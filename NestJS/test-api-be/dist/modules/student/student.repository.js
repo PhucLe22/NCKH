@@ -13,10 +13,41 @@ exports.StudentRepository = void 0;
 const common_1 = require("@nestjs/common");
 const typeorm_1 = require("typeorm");
 const student_entity_1 = require("./student.entity");
+const user_entity_1 = require("../user/user.entity");
+const exam_entity_1 = require("../exam/exam.entity");
 let StudentRepository = class StudentRepository extends typeorm_1.Repository {
     constructor(dataSource) {
         super(student_entity_1.Student, dataSource.createEntityManager());
         this.dataSource = dataSource;
+    }
+    async findByStudentAndExam(userId, examId) {
+        return this.createQueryBuilder('student')
+            .leftJoinAndSelect('student.user', 'user')
+            .leftJoinAndSelect('student.exams', 'exam')
+            .where('student.user_id = :userId', { userId })
+            .andWhere('exam.exam_id = :examId', { examId })
+            .getOne();
+    }
+    async createByStudentAndExam(userId, examId) {
+        const user = await this.dataSource.getRepository(user_entity_1.User).findOne({ where: { user_id: userId } });
+        const exam = await this.dataSource.getRepository(exam_entity_1.Exam).findOne({ where: { exam_id: examId } });
+        if (!user || !exam) {
+            throw new Error('User or Exam not found');
+        }
+        const student = this.create({
+            user: user,
+            grade: ''
+        });
+        const savedStudent = await this.save(student);
+        const studentWithExams = await this.findOne({
+            where: { student_id: savedStudent.student_id },
+            relations: ['exams']
+        });
+        if (studentWithExams) {
+            studentWithExams.exams = [exam];
+            return this.save(studentWithExams);
+        }
+        return savedStudent;
     }
 };
 exports.StudentRepository = StudentRepository;
